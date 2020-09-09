@@ -65,13 +65,14 @@ const DGX = new Model({
 // @/pages/mine/address.vue
 <template>
     <div class="App Center l-flex">
+        <!-- 更多模型状态请在浏览器中使用 vue-devtools 工具查看-->
         <pre>{{ Main.list }}</pre>
     </div>
 </template>
 <script>
     import StoreMix from '@dgteam/model/dist/mixins/store'
     export default {
-        mixins: [StoreMix],
+        mixins: [StoreMix], // 混入模型辅助函数
         data(){
             return {
                 // 被绑定的模型路径，第一个为库名，第二个为模型名
@@ -86,20 +87,20 @@ const DGX = new Model({
                 Params: {}
             }
         }
-    methods: {
-        init(){
-            this.reload()
+        methods: {
+            init(){
+                this.reload()
+            },
+            reload(){
+                let page = 1 // 不传默认为 1
+                let paths = 'mine/address' // 不传默认取 this.store
+                let filter = {} // 不传默认取 this.Filter
+                this.Get(page, paths, filter) // 拉取默认数据
+            }
         },
-        reload(){
-            let page = 1 // 不传默认为 1
-            let paths = 'mine/address' // 不传默认取 this.store
-            let filter = {} // 不传默认取 this.Filter
-            this.Get(page, paths, filter) // 拉取默认数据
+        mounted(){
+            this.init()
         }
-    },
-    mounted(){
-        this.init()
     }
-  }
 </script>
 ```
