@@ -1,0 +1,17 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "qyotemark": [ false ],
+        "semicolon": [ false ], // 代码结束必须换行且带分好
+        "interface-name": [ true, "never-prefix" ],
+        "max-file-line-count":[ true, 1000 ], // 每行代码最大 1000 行
+        "no-consecutive-blank-lines":[ true, 2 ],// 不允许有空行
+        "no-console": [ false ], // 禁止打印数据
+        "no-bitwise": [ false] // 禁止位运算 |
+    },
+    "rulesDirectory": []
+}
