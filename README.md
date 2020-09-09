@@ -58,9 +58,10 @@ const DGX = new Model({
         }
     }
 })
+```
 
 ### 加载全局混合辅组函数
-```vue
+```html
 // @/pages/mine/address.vue
 <template>
     <div class="App Center l-flex">
