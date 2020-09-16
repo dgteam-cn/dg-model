@@ -104,3 +104,32 @@ const DGX = new Model({
     }
 </script>
 ```
+
+### 已知问题
+```shell
+在 UNIAPP 中 dist 无法触发 RESFUL 的 BUG
+```
+
+### 更新建议
+```shell
+=== model ===
+POST 支持自动注入（自配 + 公配）
+支持请求取消 cancel (相同请求自动取消前一个，在 GET 中)（自配 + 公配）
+支持提交防抖（自配 + 公配）：前一个相同请求完成前无法提交下一个请求 | 前一个请求发送后的 x 毫秒内无法提交相同请求
+支持 filter 参数锁定
+支持中间件（拦截器）
+支持使用对象引用 store // 使用别名
+在 Row 对象中打上模型的引用戳
+支持动态增加模型
+
+=== mixins ===
+GetInit 支持本地缓存（使用 GET 会清除掉 GetInit 的缓存）
+GetInit 支持强制刷新
+Del 的confirm 参数支持对象配置或者方法（回调）配置
+Submit 支持传入提交参数
+Edit 的 model 支持传入对象
+MakeFilter => GetFilter 增加语法糖
+LoadMore => GetMore 增加语法糖
+LoadMore 将支持 marker 模式
+增加 StorePath 方法去快速引用模型
+```
