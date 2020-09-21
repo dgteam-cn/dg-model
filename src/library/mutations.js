@@ -109,26 +109,18 @@ const MODEL_ROW_EXTEND = function(state, [model, item, relation] = []){
 　  try {
         if(item.id){
             for(let row of state[model].list){
-                // if(relation && item[relation]){
-                //     for(let sub of item[relation]){
-                //         if(sub.id && sub.id === data.id){
-                //             console.log('MODEL_ROW_EXTEND',item)
-                //             Object.assign(sub,data)
-                //         }
-                //     }
-                // }else
                 if(row.id && row.id === item.id){
                     Object.assign(row, item)
                 }
             }
             if(state[model].item){
                 let row = state[model].item
-                if(row.id && row.id === data.id){
+                if(row.id && row.id === item.id){
                     Object.assign(row, item)
                 }
             }
         }
-　　}catch(error) {
+　　} catch(error) {
         console.info(`dgx error`,error)
 　　}		
 }
