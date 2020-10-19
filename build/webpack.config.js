@@ -35,7 +35,7 @@ module.exports = {
     },
     output: {      
         filename: '[name].js',
-        path: path.resolve(__dirname,'../dist'),
+        path: path.resolve(__dirname, '../dist'),
         library: isDev ? '_[name]' : undefined,
         libraryTarget: 'umd'
     },
@@ -47,7 +47,7 @@ module.exports = {
         // 'dg-helper': {umd: 'dg-helper'},
         // 'dg-helper': 'dg-helper'
     },
-    //target: 'node',
+    target: 'node',
     // target: 'electron-renderer', //isDev ? 'web' : 'async-node',
     module: {
         rules: [

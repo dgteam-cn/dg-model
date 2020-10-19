@@ -82,7 +82,6 @@ const RESTFUL = function(model, { state, fetch }){
         let { name, method } = action
         let path = `${name}_${MODEL}`
         apis[path] = ({ state, dispatch, commit }, data={}) => {
-
             // 自动填充路由参数，例如 /user/:id 等，默认从 paths 中获取，若获取不到则尝试从 params 中获取
             let paths = []
             for(let route of opt.url.split('/')){
@@ -120,7 +119,7 @@ const RESTFUL = function(model, { state, fetch }){
                     switch(method){
                         case 'GET':
                             if(data.id){
-                                commit('MODEL_UPDATE', [model, 'item', res.result.id])
+                                commit('MODEL_UPDATE', [model, 'item', res.result])
                                 commit('MODEL_UPDATE', [model, 'id', res.result.id])
                             }else if(Array.isArray(res.result)){
                                 // 列表数据

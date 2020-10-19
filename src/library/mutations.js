@@ -77,7 +77,7 @@ const MODEL_MORE = function(state, [model, key='list', value]){
 const MODEL_REMOVE = function(state, {base, key, id, index}){
     if(id){
         let list = state[base][key]
-        for(let i=0; i<list.length; i++){
+        for(let i=0; i < list.length; i++){
             if(list[i].id == id){
                 state[base][key].splice(i, 1)
                 break;
