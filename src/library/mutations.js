@@ -77,7 +77,7 @@ const MODEL_MORE = function(state, [model, key='list', value]){
 const MODEL_REMOVE = function(state, {base, key, id, index}){
     if(id){
         let list = state[base][key]
-        for(let i=0; i<list.length; i++){
+        for(let i=0; i < list.length; i++){
             if(list[i].id == id){
                 state[base][key].splice(i, 1)
                 break;
@@ -123,7 +123,7 @@ const MODEL_ROW_EXTEND = function(state, [model, item, relation] = []){
             }
             if(state[model].item){
                 let row = state[model].item
-                if(row.id && row.id === data.id){
+                if(row.id && row.id === item.id){
                     Object.assign(row, item)
                 }
             }

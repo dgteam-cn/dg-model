@@ -122,6 +122,7 @@ POST 支持自动注入（自配 + 公配）
 在 Row 对象中打上模型的引用戳
 支持动态增加模型
 
+GET => FETCH {method: 'GET'} 的语法糖
 === mixins ===
 GetInit 支持本地缓存（使用 GET 会清除掉 GetInit 的缓存）
 GetInit 支持强制刷新
