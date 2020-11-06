@@ -3,8 +3,8 @@ import Helper from '@dgteam/helper'
 import * as Mutations from "./mutations"
 import * as Actions from "./actions"
 import { ACTIVE, RESTFUL } from "./factory"
-
-const { FETCH, FETCH_FINISH } = Actions
+import { List } from './class'
+const { FETCH, GET, FETCH_FINISH } = Actions
 const { 
     FETCH_REMOVE, FETCH_CANCEL, FETCH_UPDATE,
     MODEL_ADD, MODEL_MORE, MODEL_UPDATE, MODEL_REMOVE, MODEL_RESET,
@@ -20,6 +20,7 @@ class Model {
     }
     actions = {
         FETCH: FETCH.bind(this),
+        GET: GET.bind(this),
         FETCH_FINISH: FETCH_FINISH.bind(this)
     }
     mutations = {
@@ -41,13 +42,36 @@ class Model {
             beforeRestful: null,
             afterFetch: null,
             afterRestful: null
+        },
+        RESTful: {
+            GET: {
+                debounce: 200,
+                interact: true
+            },
+            POST: {
+                debounce: 500,
+                interact: false
+            },
+            PUT: {
+                debounce: 500,
+                interact: true
+            },
+            DELETE: {
+                debounce: 500,
+                interact: true
+            }
         }
     }
 
     // 安装默认配置
     static install(opt){
-        Model.Options = Object.assign(Model.Options, opt)
+        for (let key of ['fetch', 'RESTful']) {
+            if (opt && opt[key] && typeof opt[key] === 'object') {
+                Model.Options[key] = Object.assign(Model.Options[key], opt[key])
+            }
+        }
     }
+    
     // 注册新模型
     static register(model, options){
 
@@ -82,18 +106,21 @@ class Model {
                     init: false,
                     loading: false,
                     editing: false,
-                    ajax: [],
+                    ajax: [], //new List(),
                     error: false,
                     page: 1,
+                    marker: undefined,
                     total: null,
                     count: undefined,
                     empty: false,
-                    list: [],
+                    list: [], // new List(),
+                    filter: {},
                     id: null,
                     active: null,
-                    item: null,
+                    item: null
                 }, this.state[model]))
                 Vue.set(this.state[model], 'reset', Object.assign({}, this.state[model]))
+
                 // 合并工厂方法
                 this.actions = Object.assign(this.actions, ACTIVE(model, this), RESTFUL(model, this))                 
             }

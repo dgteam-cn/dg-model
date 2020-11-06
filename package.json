@@ -4,14 +4,16 @@
   "description": "",
   "main": "./dist/library/main.js",
   "scripts": {
+    "start": "npx babel src --out-dir dist --watch",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
-    "push": "babel src -d dist && npm publish --access public",
-    "build": "cross-env NODE_ENV=production webpack --config ./build/webpack.config.js"
+    "push": "babel src -d dist && npm publish --access public"
   },
   "author": "2681137811",
   "license": "MIT",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "@dgteam/helper": "^0.2.2",
+    "lodash": "^4.17.20",
     "vue": "^2.5.16"
   },
   "devDependencies": {
@@ -21,6 +23,7 @@
     "@babel/plugin-transform-runtime": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
     "@babel/runtime": "^7.11.2",
+    "@vue/cli-service": "^4.5.0",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "cross-env": "^7.0.2",
@@ -28,6 +31,7 @@
     "ts-loader": "^7.0.5",
     "tslint": "^6.1.2",
     "typescript": "^3.9.5",
+    "vue-template-compiler": "^2.6.12",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"

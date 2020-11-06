@@ -1,31 +1,35 @@
 import Vue from 'vue'
 
 // Fetch 数据移除
-const FETCH_REMOVE = function(state,[ model, index ]=[]) {
+const FETCH_REMOVE = function(state, [model, index]=[]) {
     state[model].ajax.splice(index, 1)
 }
 
 // Fetch 取消请求
-const FETCH_CANCEL = function(state, config={}) {
-    let opt = Object.assign({ model: undefined, only: undefined, id: undefined },config)
+const FETCH_CANCEL = function(state, [model, only, id]) {
+    let opt = Object.assign({model: undefined, only: undefined, id: undefined}, {model, only, id})
     let models = opt.model ? opt.model : state.models
-    if(typeof models != 'object'){
+    if (typeof models != 'object') {
         models = [models]
     }
     finish:
-    for(let m of models){
-        for(let i=0;i<state[m].ajax.length;i++){                
+    for (let m of models) {
+        for (let i=0; i<state[m].ajax.length; i++) {                
             // 当存在 only 条件时且不满足 only 条件时候进行 break 操作
-            if(opt.only !== undefined && opt.only != state[m].ajax[i].only){
+            if (opt.only !== undefined && opt.only != state[m].ajax[i].only) {
                 break
             }
             // 当存在 id 条件时且不满足 id 条件时候进行 break 操作
-            if(opt.id !== undefined && opt.id != state[m].ajax[i].id){
+            if (opt.id !== undefined && opt.id != state[m].ajax[i].id) {
                 break
             }
             // 剩余为满足取消条件
-            state[m].ajax[i].cancel()
-            state[m].ajax.splice(i,1)
+            try {
+                state[m].ajax[i].cancel()
+            } catch (err) {
+                console.log('DGX FETCH_CANCEL, 需要给请求配置取消函数')
+            }
+            state[m].ajax.splice(i, 1)
             break finish
         }
     }
@@ -35,12 +39,12 @@ const FETCH_CANCEL = function(state, config={}) {
 const FETCH_UPDATE = function(state, [model]=[]) {
     let loading = 0
     let editing = 0
-    for(let fetch of state[model].ajax){
-        if(fetch.method){
+    for (let fetch of state[model].ajax) {
+        if (fetch.method) {
             let method = fetch.method.toUpperCase()
-            if(method === 'GET'){
+            if (method === 'GET') {
                 loading += 1
-            }else if(~['POST','PUT','DELETE'].indexOf(method)){
+            } else if (~['POST','PUT','DELETE'].indexOf(method)) {
                 editing += 1
             }
         }
@@ -49,6 +53,11 @@ const FETCH_UPDATE = function(state, [model]=[]) {
     Vue.set(state[model], 'editing', editing)
 }
 
+/**
+ * @name 模型添加
+ * @param {*} state 
+ * @param {*} param1 
+ */
 const MODEL_ADD = function(state, [model, key='ajax', value, position=-1 ]=[]){
     if(typeof position === 'string'){
         if(~['start', 'begin', 'head'].indexOf(position)){
@@ -75,7 +84,7 @@ const MODEL_MORE = function(state, [model, key='list', value]){
     }
 }
 const MODEL_REMOVE = function(state, {base, key, id, index}){
-    if(id){
+    if (id) {
         let list = state[base][key]
         for(let i=0; i < list.length; i++){
             if(list[i].id == id){
@@ -83,9 +92,9 @@ const MODEL_REMOVE = function(state, {base, key, id, index}){
                 break;
             }
         }
-    }else if(index || index == 0){
+    } else if (index || index == 0) {
         state[base][key].splice(index, 1)
-    }else{
+    } else {
         delete state[base][key]
     }
 }

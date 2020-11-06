@@ -107,30 +107,41 @@ const DGX = new Model({
 
 ### 已知问题
 ```shell
-在 UNIAPP 中 dist 无法触发 RESFUL 的 BUG
+✅ 在 UNIAPP 中 dist 无法触发 RESFUL 的 BUG
+✅ - 已使用 babel 编译成 ES5 模式
 ```
 
 ### 更新建议
 ```shell
 === model ===
-POST 支持自动注入（自配 + 公配）
-支持请求取消 cancel (相同请求自动取消前一个，在 GET 中)（自配 + 公配）
-支持提交防抖（自配 + 公配）：前一个相同请求完成前无法提交下一个请求 | 前一个请求发送后的 x 毫秒内无法提交相同请求
-支持 filter 参数锁定
-支持中间件（拦截器）
-支持使用对象引用 store // 使用别名
-在 Row 对象中打上模型的引用戳
-支持动态增加模型
+✅ POST 支持自动注入（自配 + 公配）
+✅ DELETE 中删删除数据支持联动
+⬜ RESFUL 增加提交防抖与节流（自配 + 公配）：前一个相同请求完成前无法提交下一个请求 | 前一个请求发送后的 x 毫秒内无法提交相同请求
+✅ 支持 filter 参数锁定
+⬜ 支持中间件（拦截器）
+⬜ 支持使用对象引用 store // 使用别名
+⬜ 支持动态增加模型
+⬜ 支持本地 MOCK 支持，并且对 RESEFUL 操作能产生联动效果
+❌ 增加 List 类
+✅ 增加 Item 类, 在 Item 对象中打上模型的引用戳
+✅ GET => FETCH {method: 'GET'} 的语法糖
+⬜ 强制参数 params
+⬜ URL 类（格式解析）
+⬜ 在 Submit 等方法传入系统的 $event 值时候的报错
+✅ Item 方法不返回 res [❗❗❗] 已修复
+✅ RESFUL 增加 only 特性，同一类型在结果成功返回时候只能请求一次
 
-GET => FETCH {method: 'GET'} 的语法糖
+=== BUG ===
+✅ 低网络状态下，请求超时后无法移除 AJAX 队列
+✅ 3 级 paths 下 Active 失效 (已更换为纯 ID 模式)
+
 === mixins ===
-GetInit 支持本地缓存（使用 GET 会清除掉 GetInit 的缓存）
-GetInit 支持强制刷新
-Del 的confirm 参数支持对象配置或者方法（回调）配置
-Submit 支持传入提交参数
-Edit 的 model 支持传入对象
-MakeFilter => GetFilter 增加语法糖
-LoadMore => GetMore 增加语法糖
-LoadMore 将支持 marker 模式
-增加 StorePath 方法去快速引用模型
+✅ GetInit 支持本地缓存（使用 GET 会清除掉 GetInit 的缓存）
+✅ GetInit 支持强制刷新
+✅ Submit 支持传入提交参数 [❗❗❗] 传参方式改变，第一个参数为提交体对象
+✅ GetFilter => MakeFilter 增加语法糖
+✅ GetMore => LoadMore 增加语法糖
+⬜ LoadMore 将支持 marker 模式
+✅ 增加 Clean 快速清理模型方法
+⬜ 增加 StorePath 方法去快速引用模型
 ```

@@ -31,7 +31,7 @@ const plugins = isDev ? [
 module.exports = {
     entry: {
         "index": "./src/library/main.js",
-        "mixins/store": "./src/mixins/store.js",
+        "mixins/store": "./src/mixins/store.js"
     },
     output: {      
         filename: '[name].js',
