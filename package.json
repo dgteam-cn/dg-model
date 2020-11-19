@@ -1,12 +1,13 @@
 {
   "name": "@dgteam/model",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "",
   "main": "./dist/library/main.js",
   "scripts": {
     "start": "npx babel src --out-dir dist --watch",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
-    "push": "babel src -d dist && npm publish --access public"
+    "push": "npx babel src --out-dir dist && npm publish --access public",
+    "tpush": "npx babel src --out-dir dist && npm config set registry=http://registry.npmjs.org && npm publish --access public && npm config set registry=https://registry.npm.taobao.org/"
   },
   "author": "2681137811",
   "license": "MIT",

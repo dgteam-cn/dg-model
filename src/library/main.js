@@ -4,6 +4,7 @@ import * as Mutations from "./mutations"
 import * as Actions from "./actions"
 import { ACTIVE, RESTFUL } from "./factory"
 import { List } from './class'
+import pkg from '../../package.json'
 const { FETCH, GET, FETCH_FINISH } = Actions
 const { 
     FETCH_REMOVE, FETCH_CANCEL, FETCH_UPDATE,
@@ -34,6 +35,7 @@ class Model {
     static Actions = Actions
     static Factory = { ACTIVE, RESTFUL }
     static Options = {
+        version: pkg.version,
         fetch: {
             ajax: null, 
             socket: null, 

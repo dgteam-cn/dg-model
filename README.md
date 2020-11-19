@@ -130,7 +130,7 @@ const DGX = new Model({
 ⬜ 在 Submit 等方法传入系统的 $event 值时候的报错
 ✅ Item 方法不返回 res [❗❗❗] 已修复
 ✅ RESFUL 增加 only 特性，同一类型在结果成功返回时候只能请求一次
-
+⬜ 增加 GET.limit（自配 + 公配） 提交 GET 请求时候强制覆盖 params 或 paths
 === BUG ===
 ✅ 低网络状态下，请求超时后无法移除 AJAX 队列
 ✅ 3 级 paths 下 Active 失效 (已更换为纯 ID 模式)
