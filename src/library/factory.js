@@ -78,11 +78,11 @@ const RESTFUL = function(model, {state, fetch}) {
         {name: 'MORE', method: 'GET'},
         {name: 'POST', method: 'POST'},
         {name: 'PUT', method: 'PUT'},
-        {name: 'DELETE', method: 'DELETE'},
+        {name: 'DELETE', method: 'DELETE'}
     ]
     for (let action of actions) {
 
-        let {name, method} = action
+        const {name, method} = action
         let path = `${name}_${MODEL}`
 
         apis[path] = ({state, dispatch, commit}, data={}) => {
@@ -94,10 +94,23 @@ const RESTFUL = function(model, {state, fetch}) {
              */
             const getRESTfulConfig = (key, method) => {
                 let infer = false
-                if (typeof key === 'string') {
-                    if (data[key]) infer = data[key]
-                    if (opt[key]) infer = opt[key]
-                    if (typeof Model.Options.RESTful === 'object' && typeof Model.Options.RESTful[method] === 'object' && Model.Options.RESTful[method][key]) infer = Model.Options.RESTful[method][key]
+                if (typeof key === 'string') {                    
+                    if (data[key]) {
+                        // 优先从 action 的 data 中获取
+                        infer = data[key] 
+                    } else if (opt[method] && opt[method][key]) {
+                        // 否则从 model 的 options 中获取
+                        infer = opt[method][key]
+                    } else if (opt[key]) {
+                        infer = opt[key]
+                    } else if (typeof Model.Options.RESTful === 'object') {
+                        // 尝试在全局属性中获取
+                        if (typeof Model.Options.RESTful[method] === 'object' && Model.Options.RESTful[method][key]) {
+                            infer = Model.Options.RESTful[method][key]
+                        } else if (Model.Options.RESTful[key]) {
+                            infer = Model.Options.RESTful[key]
+                        }
+                    }
                     if (infer === true && key === 'only') {
                         infer = method // only 特性
                     }
@@ -113,7 +126,7 @@ const RESTFUL = function(model, {state, fetch}) {
                     if (data.paths && data.paths[key] != undefined) {
                         paths.push(data.paths[key])
                         delete data.paths[key]
-                    } else if(data.params && data.params[key] != undefined) {
+                    } else if (data.params && data.params[key] != undefined) {
                         paths.push(data.params[key])
                         delete data.params[key]
                     } else {
@@ -131,9 +144,24 @@ const RESTFUL = function(model, {state, fetch}) {
                 params: data.params || {},
                 paths: data.paths || {},
                 header: data.header || {},
+                limit: getRESTfulConfig('limit', method) || {}, // 请求限制
                 only: getRESTfulConfig('only', method), // 是否是禁止重复请求
                 silent: getRESTfulConfig('silent', method), // 是否静默加载
                 loading: getRESTfulConfig('loading', method) // 是否显示加载中动画 （移动端）
+            }
+
+            if (typeof fetchData.limit === 'object') {
+                for (const key in fetchData.limit) {
+                    for (const name of ['params', 'paths', 'data']) {
+                        if (
+                            (method === 'GET' && name === 'params') ||
+                            (method !== 'GET' && name === 'data') ||
+                            name === 'paths'
+                        ) {
+                            fetchData[name][key] = fetchData.limit[key]
+                        }
+                    }
+                }
             }
 
             // 加载更多时，自动区分 marker 模式与 page 模式
@@ -149,7 +177,7 @@ const RESTFUL = function(model, {state, fetch}) {
             const interactHandles = {
 
                 GET: ({commit, model}, res, config) => {
-                    let interact = getRESTfulConfig('interact', 'GET')
+                    const interact = getRESTfulConfig('interact', 'GET')
                     if (config.id) {
                         if (interact) {
                             commit('MODEL_UPDATE', [model, 'id', res.result.id])
@@ -167,19 +195,17 @@ const RESTFUL = function(model, {state, fetch}) {
                         commit('MODEL_UPDATE', [model, 'marker', res.marker !== undefined ? res.marker : undefined])
                         commit('MODEL_UPDATE', [model, 'count', res.count != undefined && res.count >= 0 ? res.count : undefined])
                         commit('MODEL_UPDATE', [model, 'total', res.total])
-                        commit('MODEL_UPDATE', [model, 'empty', res.page == 1 && !res.result.length ? true : false])
+                        commit('MODEL_UPDATE', [model, 'empty', !!(res.page == 1 && !res.result.length)])
                         commit('MODEL_UPDATE', [model, 'more', res.page < res.total])
                         commit('MODEL_UPDATE', [model, 'filter', config.params ? Helper.Origin(config.params) : {}])
-                    } else {
-                        if (interact) {
-                            commit('MODEL_UPDATE', [model, 'list', res.result || res]) // new List(res.result)
-                            commit('MODEL_UPDATE', [model, 'item', res.result || res])
-                        }
+                    } else if (interact) {
+                        commit('MODEL_UPDATE', [model, 'list', res.result || res]) // new List(res.result)
+                        commit('MODEL_UPDATE', [model, 'item', res.result || res])
                     }
                 },
                 
                 POST: ({state, commit, model}, res, config) => {
-                    let interact = getRESTfulConfig('interact', 'POST')
+                    const interact = getRESTfulConfig('interact', 'POST')
                     if (interact && res.result && res.result.id) {
                         let position = 'end' // 判定增加数据的位置
                         if (typeof interact === 'object' && interact.position) {
@@ -187,22 +213,22 @@ const RESTFUL = function(model, {state, fetch}) {
                         } else if (typeof interact === 'number' || ~['start', 'begin', 'head', 'end', 'finish', 'foot', 'last'].indexOf(interact)) {
                             position = interact
                         }
-                        commit('MODEL_ADD' ,[model, 'list', new Item(res.result), position])
+                        commit('MODEL_ADD', [model, 'list', new Item(res.result), position])
                     }
                     if (state[model].count != undefined && state[model].count >= 0) {
-                        commit('MODEL_UPDATE' ,[model, 'count', state[model].count + 1])
+                        commit('MODEL_UPDATE', [model, 'count', state[model].count + 1])
                     }
                 },
 
                 PUT: ({commit, model}, res, config) => {
-                    let interact = getRESTfulConfig('interact', 'PUT')
+                    const interact = getRESTfulConfig('interact', 'PUT')
                     if (interact && res.result && res.result.id) {
                         commit('MODEL_ROW_EXTEND', [model, res.result])
                     }
                 },
 
                 DELETE: ({state, commit, model}, res, config) => {
-                    let interact = getRESTfulConfig('interact', 'DELETE')
+                    const interact = getRESTfulConfig('interact', 'DELETE')
                     if (interact) {
                         commit('MODEL_REMOVE', {base: model, id: config.id,  key: 'list'})
                         if (state[model].item && state[model].item.id === config.id) {

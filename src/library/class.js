@@ -15,11 +15,6 @@ class Item extends Object {
     constructor(item) {
         super()
         Object.assign(this, item)
-        // Object.defineProperty(this, "model", {
-        //     value: opt,
-        //     enumerable: false,
-        //     writable: false
-        // })
     }
     copy() {
         return new Item(this)

@@ -1,6 +1,7 @@
 {
   "name": "@dgteam/model",
-  "version": "0.2.3",
+  "version": "0.2.4",
+  "author": "donguayx@qq.com",
   "description": "",
   "main": "./dist/library/main.js",
   "scripts": {
@@ -25,9 +26,11 @@
     "@babel/preset-env": "^7.11.5",
     "@babel/runtime": "^7.11.2",
     "@vue/cli-service": "^4.5.0",
+    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "cross-env": "^7.0.2",
+    "eslint": "^7.14.0",
     "html-webpack-plugin": "^4.3.0",
     "ts-loader": "^7.0.5",
     "tslint": "^6.1.2",

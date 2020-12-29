@@ -86,10 +86,12 @@ const FETCH = function({state, dispatch, commit}, config={}) {
 const GET = function({dispatch}, config) {
     if (typeof config === 'string') {
         config = {url: config}
+    } else if (Array.isArray) {
+        const [url, parmas={}, options={}] = config
+        config = {url, parmas, ...options}
     }
     return dispatch('FETCH', {...config, method: 'GET'})
 }
-
 // Fetch 结束请求
 const FETCH_FINISH = function({state, dispatch, commit}, [model, id]=[]) {
     for(let i=0; i<state[model].ajax.length; i++){

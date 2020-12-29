@@ -87,15 +87,19 @@ class Model {
         this.namespaced = true
 
         // 混合配置
-        for(let key of ['state', 'actions', 'mutations', 'getters']){
-            if(opt && typeof opt[key] === 'object'){
+        for (let key of ['state', 'actions', 'mutations', 'getters']) {
+            if (opt && typeof opt[key] === 'object') {
                 this[key] = Object.assign(this[key], opt[key])
             }
         }
 
         // 遍历所有 state 查找 dgx 模块并创建方法
-        for(let model in this.state){
+        for (let model in this.state) {
             if(Helper.IsObject(this.state[model]) && this.state[model].options){
+
+                if (typeof options === 'string') {
+                    options = {url: options}
+                }
 
                 // 模块通用状态属性
                 this.state.ajax[model] = 0
