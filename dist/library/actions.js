@@ -161,6 +161,19 @@ var GET = function GET(_ref2, config) {
     config = {
       url: config
     };
+  } else if (Array.isArray) {
+    var _config = config,
+        _config2 = _slicedToArray(_config, 3),
+        url = _config2[0],
+        _config2$ = _config2[1],
+        parmas = _config2$ === void 0 ? {} : _config2$,
+        _config2$2 = _config2[2],
+        options = _config2$2 === void 0 ? {} : _config2$2;
+
+    config = _objectSpread({
+      url: url,
+      parmas: parmas
+    }, options);
   }
 
   return dispatch('FETCH', _objectSpread(_objectSpread({}, config), {}, {

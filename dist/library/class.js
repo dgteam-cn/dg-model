@@ -89,12 +89,7 @@ var Item = /*#__PURE__*/function (_Object) {
     _classCallCheck(this, Item);
 
     _this2 = _super2.call(this);
-    Object.assign(_assertThisInitialized(_this2), item); // Object.defineProperty(this, "model", {
-    //     value: opt,
-    //     enumerable: false,
-    //     writable: false
-    // })
-
+    Object.assign(_assertThisInitialized(_this2), item);
     return _this2;
   }
 

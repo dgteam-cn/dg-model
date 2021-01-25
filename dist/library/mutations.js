@@ -81,7 +81,7 @@ var FETCH_CANCEL = function FETCH_CANCEL(state, _ref3) {
         try {
           state[m].ajax[i].cancel();
         } catch (err) {
-          console.log('DGX FETCH_CANCEL, 需要给请求配置取消函数');
+          console.error('DGX FETCH_CANCEL, 需要给请求配置取消函数');
         }
 
         state[m].ajax.splice(i, 1);
@@ -287,7 +287,7 @@ var MODEL_ROW_EXTEND = function MODEL_ROW_EXTEND(state) {
       }
     }
   } catch (error) {
-    console.info("dgx error", error);
+    console.error("dgx error", error);
   }
 };
 

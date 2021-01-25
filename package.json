@@ -1,20 +1,18 @@
 {
   "name": "@dgteam/model",
-  "version": "0.2.4",
-  "author": "donguayx@qq.com",
+  "version": "0.2.7",
   "description": "",
-  "main": "./dist/library/main.js",
+  "author": "2681137811 <donguayx@qq.com>",
+  "main": "dist/index.js",
   "scripts": {
     "start": "npx babel src --out-dir dist --watch",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
-    "push": "npx babel src --out-dir dist && npm publish --access public",
-    "tpush": "npx babel src --out-dir dist && npm config set registry=http://registry.npmjs.org && npm publish --access public && npm config set registry=https://registry.npm.taobao.org/"
+    "push": "npx babel src --out-dir dist && npm publish --access public"
   },
-  "author": "2681137811",
   "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
-    "@dgteam/helper": "^0.2.2",
+    "@dgteam/helper": "^0.2.7",
     "lodash": "^4.17.20",
     "vue": "^2.5.16"
   },

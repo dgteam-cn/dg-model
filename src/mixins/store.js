@@ -1,4 +1,4 @@
-
+import Model from '../index.js'
 export default {
     data(){
         return {
@@ -444,7 +444,12 @@ export default {
             }
 
             if (!paths) {
-                paths = this.StoreInfo.path_origin
+                try {
+                    paths = this.StoreInfo.path_origin
+                } catch (err) {
+                    console.error(this.StoreInfo)
+                    throw new Error('model error', err)
+                }
             }
 
             if (typeof paths === 'string') {

@@ -116,7 +116,13 @@ var Model = /*#__PURE__*/function () {
 
     for (var model in this.state) {
       if (_helper["default"].IsObject(this.state[model]) && this.state[model].options) {
-        // 模块通用状态属性
+        if (typeof options === 'string') {
+          options = {
+            url: options
+          };
+        } // 模块通用状态属性
+
+
         this.state.ajax[model] = 0;
         this.state.models.push(model); // 基础属性
 

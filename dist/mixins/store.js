@@ -5,6 +5,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _index = _interopRequireDefault(require("../index.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -630,7 +634,12 @@ var _default = {
       }();
 
       if (!paths) {
-        paths = this.StoreInfo.path_origin;
+        try {
+          paths = this.StoreInfo.path_origin;
+        } catch (err) {
+          console.error(this.StoreInfo);
+          throw new Error('model error', err);
+        }
       }
 
       if (typeof paths === 'string') {

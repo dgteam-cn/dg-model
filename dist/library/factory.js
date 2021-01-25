@@ -153,9 +153,22 @@ var RESTFUL = function RESTFUL(model, _ref4) {
         var infer = false;
 
         if (typeof key === 'string') {
-          if (data[key]) infer = data[key];
-          if (opt[key]) infer = opt[key];
-          if (_typeof(_main["default"].Options.RESTful) === 'object' && _typeof(_main["default"].Options.RESTful[method]) === 'object' && _main["default"].Options.RESTful[method][key]) infer = _main["default"].Options.RESTful[method][key];
+          if (data[key]) {
+            // 优先从 action 的 data 中获取
+            infer = data[key];
+          } else if (opt[method] && opt[method][key]) {
+            // 否则从 model 的 options 中获取
+            infer = opt[method][key];
+          } else if (opt[key]) {
+            infer = opt[key];
+          } else if (_typeof(_main["default"].Options.RESTful) === 'object') {
+            // 尝试在全局属性中获取
+            if (_typeof(_main["default"].Options.RESTful[method]) === 'object' && _main["default"].Options.RESTful[method][key]) {
+              infer = _main["default"].Options.RESTful[method][key];
+            } else if (_main["default"].Options.RESTful[key]) {
+              infer = _main["default"].Options.RESTful[key];
+            }
+          }
 
           if (infer === true && key === 'only') {
             infer = method; // only 特性
@@ -176,16 +189,16 @@ var RESTFUL = function RESTFUL(model, _ref4) {
           var route = _step.value;
 
           if (route[0] === ':') {
-            var key = route.substr(1);
+            var _key = route.substr(1);
 
-            if (data.paths && data.paths[key] != undefined) {
-              paths.push(data.paths[key]);
-              delete data.paths[key];
-            } else if (data.params && data.params[key] != undefined) {
-              paths.push(data.params[key]);
-              delete data.params[key];
+            if (data.paths && data.paths[_key] != undefined) {
+              paths.push(data.paths[_key]);
+              delete data.paths[_key];
+            } else if (data.params && data.params[_key] != undefined) {
+              paths.push(data.params[_key]);
+              delete data.params[_key];
             } else {
-              console.warn('DGX RESTFUL - lose paths ' + key);
+              console.warn('DGX RESTFUL - lose paths ' + _key);
             }
           } else {
             paths.push(route);
@@ -205,13 +218,28 @@ var RESTFUL = function RESTFUL(model, _ref4) {
         params: data.params || {},
         paths: data.paths || {},
         header: data.header || {},
+        limit: getRESTfulConfig('limit', method) || {},
+        // 请求限制
         only: getRESTfulConfig('only', method),
         // 是否是禁止重复请求
         silent: getRESTfulConfig('silent', method),
         // 是否静默加载
         loading: getRESTfulConfig('loading', method) // 是否显示加载中动画 （移动端）
 
-      }; // 加载更多时，自动区分 marker 模式与 page 模式
+      };
+
+      if (_typeof(fetchData.limit) === 'object') {
+        for (var key in fetchData.limit) {
+          for (var _i5 = 0, _arr3 = ['params', 'paths', 'data']; _i5 < _arr3.length; _i5++) {
+            var _name = _arr3[_i5];
+
+            if (method === 'GET' && _name === 'params' || method !== 'GET' && _name === 'data' || _name === 'paths') {
+              fetchData[_name][key] = fetchData.limit[key];
+            }
+          }
+        }
+      } // 加载更多时，自动区分 marker 模式与 page 模式
+
 
       if (name === 'MORE') {
         if (state[model].marker !== undefined) {
@@ -246,15 +274,13 @@ var RESTFUL = function RESTFUL(model, _ref4) {
             commit('MODEL_UPDATE', [model, 'marker', res.marker !== undefined ? res.marker : undefined]);
             commit('MODEL_UPDATE', [model, 'count', res.count != undefined && res.count >= 0 ? res.count : undefined]);
             commit('MODEL_UPDATE', [model, 'total', res.total]);
-            commit('MODEL_UPDATE', [model, 'empty', res.page == 1 && !res.result.length ? true : false]);
+            commit('MODEL_UPDATE', [model, 'empty', !!(res.page == 1 && !res.result.length)]);
             commit('MODEL_UPDATE', [model, 'more', res.page < res.total]);
             commit('MODEL_UPDATE', [model, 'filter', config.params ? _helper["default"].Origin(config.params) : {}]);
-          } else {
-            if (interact) {
-              commit('MODEL_UPDATE', [model, 'list', res.result || res]); // new List(res.result)
+          } else if (interact) {
+            commit('MODEL_UPDATE', [model, 'list', res.result || res]); // new List(res.result)
 
-              commit('MODEL_UPDATE', [model, 'item', res.result || res]);
-            }
+            commit('MODEL_UPDATE', [model, 'item', res.result || res]);
           }
         },
         POST: function POST(_ref7, res, config) {
