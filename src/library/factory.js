@@ -214,9 +214,13 @@ const RESTFUL = function(model, {state, fetch}) {
                             position = interact
                         }
                         commit('MODEL_ADD', [model, 'list', new Item(res.result), position])
-                    }
-                    if (state[model].count != undefined && state[model].count >= 0) {
-                        commit('MODEL_UPDATE', [model, 'count', state[model].count + 1])
+                        if (state[model].count != undefined && state[model].count >= 0) {
+                            commit('MODEL_UPDATE', [model, 'count', state[model].count + 1])
+                        }
+                        // 是否需要取消列表
+                        if (state[model].empty) {
+                            commit('MODEL_UPDATE', [model, 'empty', false])
+                        }
                     }
                 },
 
@@ -236,15 +240,15 @@ const RESTFUL = function(model, {state, fetch}) {
                             commit('MODEL_UPDATE', [model, 'active', null])
                             commit('MODEL_UPDATE', [model, 'item', null])
                         }
-                    }
-                    // 影响统计数
-                    if (state[model].count != undefined && state[model].count > 0) {
-                        commit('MODEL_UPDATE', [model, 'count', state[model].count - 1])
-                    }
-                    // 是否需要触发空列表
-                    if (state[model].page === 1 && state[model].list.length === 0) {
-                        commit('MODEL_UPDATE', [model, 'empty', true])
-                        commit('MODEL_UPDATE', [model, 'more', false])
+                        // 影响统计数
+                        if (state[model].count != undefined && state[model].count > 0) {
+                            commit('MODEL_UPDATE', [model, 'count', state[model].count - 1])
+                        }
+                        // 是否需要触发空列表
+                        if (state[model].page === 1 && state[model].list.length === 0) {
+                            commit('MODEL_UPDATE', [model, 'empty', true])
+                            commit('MODEL_UPDATE', [model, 'more', false])
+                        }
                     }
                 } 
             }
