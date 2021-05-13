@@ -1,4 +1,4 @@
-import Helper from '@dgteam/helper'
+import helper from './helper'
 import {Item} from './class'
 import Model from './main.js'
 // import debounce from 'lodash/debounce'
@@ -197,7 +197,7 @@ const RESTFUL = function(model, {state, fetch}) {
                         commit('MODEL_UPDATE', [model, 'total', res.total])
                         commit('MODEL_UPDATE', [model, 'empty', !!(res.page == 1 && !res.result.length)])
                         commit('MODEL_UPDATE', [model, 'more', res.page < res.total])
-                        commit('MODEL_UPDATE', [model, 'filter', config.params ? Helper.Origin(config.params) : {}])
+                        commit('MODEL_UPDATE', [model, 'filter', config.params ? helper.Origin(config.params) : {}])
                     } else if (interact) {
                         commit('MODEL_UPDATE', [model, 'list', res.result || res]) // new List(res.result)
                         commit('MODEL_UPDATE', [model, 'item', res.result || res])

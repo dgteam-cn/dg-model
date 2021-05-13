@@ -1,4 +1,4 @@
-// import Helper from '@dgteam/helper'
+
 // import Model from './main.js'
 class List extends Array {
     constructor(arr) {

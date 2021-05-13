@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Helper from '@dgteam/helper'
+import helper from './helper'
 import * as Mutations from "./mutations"
 import * as Actions from "./actions"
 import { ACTIVE, RESTFUL } from "./factory"
@@ -95,7 +95,7 @@ class Model {
 
         // 遍历所有 state 查找 dgx 模块并创建方法
         for (let model in this.state) {
-            if(Helper.IsObject(this.state[model]) && this.state[model].options){
+            if(helper.IsObject(this.state[model]) && this.state[model].options){
 
                 if (typeof options === 'string') {
                     options = {url: options}
