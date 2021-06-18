@@ -5,7 +5,7 @@ import Model from './main.js'
 // import throttle from 'lodash/throttle'
 
 
-const ACTIVE = function(model){
+const ACTIVE = function(model) {
 
     const MODEL = model.toUpperCase()
 
@@ -50,16 +50,16 @@ const ACTIVE = function(model){
             }
         },
 
-        [ACTIVE_MODEL_CHANGE]({commit}, config={}){
+        [ACTIVE_MODEL_CHANGE]({commit}, config={}) {
             for (const key of ['id', 'active', 'item']) {
                 if (config[key] || config[key] == 0) {
-                    commit('MODEL_UPDATE', [model, key, config[key]])      
+                    commit('MODEL_UPDATE', [model, key, config[key]])
                 }
             }
             return config.item
         },
 
-        [ACTIVE_MODEL_RESET]({commit}){
+        [ACTIVE_MODEL_RESET]({commit}) {
             for (const key of ['id', 'active', 'item']) {
                 commit('MODEL_UPDATE', [model, key, undefined])
             }
@@ -69,7 +69,7 @@ const ACTIVE = function(model){
 }
 
 const RESTFUL = function(model, {state, fetch}) {
-    
+
     const MODEL = model.toUpperCase()
     const opt = state[model].options
     const apis = {}
@@ -94,10 +94,10 @@ const RESTFUL = function(model, {state, fetch}) {
              */
             const getRESTfulConfig = (key, method) => {
                 let infer = false
-                if (typeof key === 'string') {                    
+                if (typeof key === 'string') {
                     if (data[key]) {
                         // 优先从 action 的 data 中获取
-                        infer = data[key] 
+                        infer = data[key]
                     } else if (opt[method] && opt[method][key]) {
                         // 否则从 model 的 options 中获取
                         infer = opt[method][key]
@@ -136,7 +136,7 @@ const RESTFUL = function(model, {state, fetch}) {
                     paths.push(route)
                 }
             }
-            
+
             const fetchData = {
                 method, model,
                 url: data.id ? `${paths.join('/')}/${data.id}` : paths.join('/'),
@@ -154,8 +154,8 @@ const RESTFUL = function(model, {state, fetch}) {
                 for (const key in fetchData.limit) {
                     for (const name of ['params', 'paths', 'data']) {
                         if (
-                            (method === 'GET' && name === 'params') ||
-                            (method !== 'GET' && name === 'data') ||
+                            method === 'GET' && name === 'params' ||
+                            method !== 'GET' && name === 'data' ||
                             name === 'paths'
                         ) {
                             fetchData[name][key] = fetchData.limit[key]
@@ -203,7 +203,7 @@ const RESTFUL = function(model, {state, fetch}) {
                         commit('MODEL_UPDATE', [model, 'item', res.result || res])
                     }
                 },
-                
+
                 POST: ({state, commit, model}, res, config) => {
                     const interact = getRESTfulConfig('interact', 'POST')
                     if (interact && res.result && res.result.id) {
@@ -250,7 +250,7 @@ const RESTFUL = function(model, {state, fetch}) {
                             commit('MODEL_UPDATE', [model, 'more', false])
                         }
                     }
-                } 
+                }
             }
 
             // fetch 主函数
