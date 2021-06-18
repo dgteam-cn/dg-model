@@ -31,7 +31,7 @@ const ACTIVE = function(model){
                 }
             } else {
                 // 以索引来确定焦点，（ -1 = 选择数组的最后一个）
-                if (active==-1) {
+                if (active == -1) {
                     active = state[model].list.length > 0 ? state[model].list.length - 1 : 0
                 }
                 // 如果焦点不存在则默认使用原焦点，如果原焦点不存在则默认使用 0
@@ -44,9 +44,9 @@ const ACTIVE = function(model){
                 }
                 // 如果列表存在键值
                 if (state[model].list && state[model].list[active]) {
-                    return dispatch(`ACTIVE_${MODEL}_CHANGE`, {id: state[model].list[active].id, active, item: state[model].list[active]})
+                    return dispatch(ACTIVE_MODEL_CHANGE, {id: state[model].list[active].id, active, item: state[model].list[active]})
                 }
-                dispatch(`ACTIVE_${MODEL}_RESET`)
+                dispatch(ACTIVE_MODEL_RESET)
             }
         },
 

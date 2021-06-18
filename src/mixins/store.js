@@ -4,20 +4,20 @@ export default {
         return {
 
             /**
-             * @name 组件过滤暂存器
-             * @description 影响某些方法的默认获取参数
+             * 组件过滤暂存器
+             * @overview 影响某些方法的默认获取参数
              */
             Filter: {},
 
             /**
-             * @name 组件表单暂存器
-             * @description 影响某些方法的默认获取参数
+             * 组件表单暂存器
+             * @overview 影响某些方法的默认获取参数
              */
             Params: {},
 
             /**
-             * @name 单行数据编辑器信息
-             * @description 一般用于 PC 端管理后台，移动端无需使用
+             * 单行数据编辑器信息
+             * @overview 一般用于 PC 端管理后台，移动端无需使用
              */
             Editer: {view: false, title: null, form: null}
         }
@@ -25,14 +25,14 @@ export default {
     computed: {
         
         /**
-         * @name 默认数据模型
-         * @description 根据当前组件 this.store 值自动映射相关模型实例
+         * 默认数据模型
+         * @overview 根据当前组件 this.store 值自动映射相关模型实例
          */
         Main: vm => vm.StoreInfo ? vm.StoreInfo.main : {},
 
         /**
-         * @name 默认数据模型信息
-         * @description 框架内方法，业务层无需使用
+         * 默认数据模型信息
+         * @overview 框架内方法，业务层无需使用
          */
         StoreInfo() {
             let opt = this.store
@@ -61,13 +61,13 @@ export default {
     methods: {
         
         /**
-         * @name 加载数据
-         * @description 按页码加载数据
+         * 加载数据
+         * @overview 按页码加载数据
          * @param {number} [page] - 列表页码，默认加载第一页
          * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
          * @param {object} [filter] - 过滤器（筛选参数），不传则默认从 this.Filter 中获取
          * @param {object} [opt] - 参数集，会传递到 Fetch 方法中
-         * @param {object} [opt.clean] - 触发请求前清空源列表
+         * @param {boolean} [opt.clean] - 触发请求前清空源列表
          * @returns {Promise}
          */
         Get(page, paths, filter, opt={}) {
@@ -86,15 +86,15 @@ export default {
         },
 
         /**
-         * @name 初始化数据
-         * @description 初始化列表，此方法初始化过一次后便不会重复拉取请求，一般用于拉取固定数据
+         * 初始化数据
+         * @overview 初始化列表，此方法初始化过一次后便不会重复拉取请求，一般用于拉取固定数据
          * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
          * @param {object} [filter] - 筛选参数，默认没有 page 参数，若有 page 的需求可以在此对象中传递
          * @param {object} [opt] - 参数集，会传递到 Fetch 方法中
          * @param {number} [opt.cache] - 缓存时间，秒为单位，超时后会强制重新来去
-         * @param {number} [opt.strict] - 严格的，将会比对 filter 条件，如果不同将会触发重新来去
-         * @param {number} [opt.immediate] - 立即执行，强制重新拉取
-         * @param {object} [opt.clean] - 触发请求前清空源列表（若判断读取缓存，该参数无效）
+         * @param {boolean} [opt.strict] - 严格的，将会比对 filter 条件，如果不同将会触发重新来去
+         * @param {boolean} [opt.immediate] - 立即执行，强制重新拉取
+         * @param {boolean} [opt.clean] - 触发请求前清空源列表（若判断读取缓存，该参数无效）
          * @returns {Promise}
          */
         GetInit(paths, filter={}, opt={}) {
@@ -134,26 +134,26 @@ export default {
         },
 
         /**
-         * @description MakeFilter 的语法糖
+         * 重新加载列表数据
          */
-        GetFilter(paths, filter, opt) {
-            return this.MakeFilter(paths, filter, opt)
+        GetFilter(paths, filter, {clean = true, loading = false} = {}) {
+            return this.Get(1, paths, filter, { loading })
         },
 
         /**
-         * @description LoadMore 的语法糖
+         * 加载更多数据
          */
         GetMore(paths, filter, opt) {
             return this.LoadMore(paths, filter, opt)
         },
 
         /**
-         * @name 加载单行数据
-         * @description 通过主键拉取单行数据，如果拉取成功会联动触发 this.Active(item) 方法
+         * 加载单行数据
+         * @overview 通过主键拉取单行数据，如果拉取成功会联动触发 this.Active(item) 方法
          * @param {number} id - 数据主键值
          * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-         * @param {Object} params - 筛选参数，默认没有 page 参数，若有 page 的需求可以在此对象中传递
-         * @param {Object} opt - 参数集，会传递到 Fetch 方法中
+         * @param {object} params - 筛选参数，默认没有 page 参数，若有 page 的需求可以在此对象中传递
+         * @param {object} opt - 参数集，会传递到 Fetch 方法中
          * @returns {Promise}
          */
         Item(id, paths, filter={}, opt={}) {
@@ -161,11 +161,11 @@ export default {
         },
 
         /**
-         * @name 加载更多数据
-         * @description 一般用在移动端的 "触底加载" 的效果，拉取的数据会连接上一页的列表
+         * 加载更多数据
+         * @overview 一般用在移动端的 "触底加载" 的效果，拉取的数据会连接上一页的列表
          * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-         * @param {Object} filter - 过滤器（筛选参数），不传则默认从 this.Filter 中获取
-         * @param {Object} opt - 参数集，会传递到 Fetch 方法中
+         * @param {object} filter - 过滤器（筛选参数），不传则默认从 this.Filter 中获取
+         * @param {object} opt - 参数集，会传递到 Fetch 方法中
          * @returns {Promise}
          */
         LoadMore(paths, filter, opt) {
@@ -191,10 +191,10 @@ export default {
 
 
         /**
-         * @name 模型动作
+         * 模型动作
          * @param {string} name - 动作名称，会自动转换为大写字母
          * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-         * @param {Object} data - 参数集，会传递到 Fetch 方法中
+         * @param {object} data - 参数集，会传递到 Fetch 方法中
          * @returns {Promise}
          */
         Action(name='POST', paths, data={}) {
@@ -203,8 +203,8 @@ export default {
 
 
         /**
-         * @name 设为焦点
-         * @param {Object} item - 被设为焦点的实例
+         * 设为焦点
+         * @param {object} item - 被设为焦点的实例
          * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
          * @returns {Promise}
          */
@@ -213,8 +213,8 @@ export default {
         },
 
         /**
-         * @name 提交数据行
-         * @param {Object} data - 提交数据，不传则默认从 this.Params 中获取
+         * 提交数据行
+         * @param {object} data - 提交数据，不传则默认从 this.Params 中获取
          * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
          * @param {function} callback - 回调函数
          * @returns {Promise}
@@ -244,8 +244,8 @@ export default {
 
 
         /**
-         * @name 修改数据行
-         * @param {Object} data - 提交数据，不传则默认从 this.Params 中获取
+         * 修改数据行
+         * @param {object} data - 提交数据，不传则默认从 this.Params 中获取
          * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
          * @param {function} callback - 回调函数
          * @returns {Promise}
@@ -275,10 +275,12 @@ export default {
 
 
         /**
-         * @name 删除数据行
-         * @param {Object} data - 提交数据，不传则默认从 this.Params 中获取
+         * 删除数据行
+         * @param {object} data - 提交数据，不传则默认从 this.Params 中获取
          * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
          * @param {function} callback - 回调函数
+         * @param {object} opt - 参数集
+         * @param {boolean} opt.confirm - 执行前是否先弹窗确认（默认 true）
          * @returns {Promise}
          */
         Del(data=this.Origin(this.Params), paths, callback, {confirm=true}={}) {
@@ -304,7 +306,7 @@ export default {
         },
 
         /**
-         * @name 模型清理（充值）
+         * 模型清理（重置）
          * @param {function} paths - 模型路径，不传则默认从 this.store 中获取
          */
         Reset(paths) {
@@ -313,10 +315,10 @@ export default {
         },
 
         /**
-         * @name 提交表单
-         * @description 自动从 this.Params 拉取数据，根据是否有主键判断是新增还是修改
-         * @param {function} data - 提交数据，不传则默认从 this.Params 中获取
-         * @param {function} paths - 模型路径，不传则默认从 this.store 中获取
+         * 提交表单
+         * @overview 自动从 this.Params 拉取数据，根据是否有主键判断是新增还是修改
+         * @param {object} data - 提交数据，不传则默认从 this.Params 中获取
+         * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
          * @param {function} callback - 回调函数
          * @returns {Promise}
          */
@@ -327,11 +329,11 @@ export default {
         },
 
         /**
-         * @name 编辑弹窗控制器
-         * @description 自动从 this.Params 拉取数据，根据是否有主键判断是新增还是修改
-         * @param {function} item - 编辑的对象，传 NULL 表示新增对象
-         * @param {function} title - 弹窗的标题
-         * @param {function} model - 控制器所对应的键值
+         * 编辑弹窗控制器
+         * @overview 自动从 this.Params 拉取数据，根据是否有主键判断是新增还是修改
+         * @param {object} item - 编辑的对象，传 NULL 表示新增对象
+         * @param {string} title - 弹窗的标题
+         * @param {string} model - 控制器所对应的键值
          * @returns {Promise}
          */
         Edit(item, title, model='Editer') {
@@ -356,14 +358,15 @@ export default {
         // },
 
         /**
-         * @name 筛选查询
-         * @description 类似 Get 方法，一般用于用户切换了筛选条件后重新查询
+         * 筛选查询
+         * @overview 类似 Get 方法，一般用于用户切换了筛选条件后重新查询
          * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
-         * @param {Object} [filter] - 筛选条件，不传则默认从 this.Filter 中获取
-         * @param {Object} [opt] - 其他参数
+         * @param {object} [filter] - 筛选条件，不传则默认从 this.Filter 中获取
+         * @param {object} [opt] - 其他参数
          * @returns {Promise}
          */
         MakeFilter(paths, filter, {clean=true, loading=false}={}) {
+            // TODO 即将废弃
 			let {store, model} = this.ModelFormat(paths, 'get')
 			if (clean) {
 				this.Cm(`${store}/MODEL_RESET`, model)
@@ -373,10 +376,10 @@ export default {
 
 
         /**
-         * @name 执行 vuex 动作
-         * @description this.$store.dispatch 的语法糖，会自动格式化 paths
+         * 执行 vuex 动作
+         * @overview this.$store.dispatch 的语法糖，会自动格式化 paths
          * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
-         * @param {Object} [data] - 提交数据
+         * @param {object} [data] - 提交数据
          * @returns {Promise}
          */
         Dp(paths, data) {
@@ -385,8 +388,8 @@ export default {
 
 
         /**
-         * @name 执行 vuex 图片
-         * @description this.$store.commit 的语法糖，会自动格式化 paths
+         * 执行 vuex 图片
+         * @overview this.$store.commit 的语法糖，会自动格式化 paths
          * @param {string} [path] - 模型路径，不传则默认从 this.store 中获取
          * @param {object} [data] - 提交数据
          * @returns {Promise}
@@ -397,10 +400,12 @@ export default {
 
 
         /**
-         * @name 递归查询模型数据
-         * @description 框架内方法，业务层无需使用
+         * 递归查询模型数据
+         * @overview 框架内方法，业务层无需使用
+         * @param {string} [path] - 模型路径
+         * @param {object} [tunnel] - 隧道
          */
-        StoreDeepInspect(paths, tunnel=this.$store.state) {
+        StoreDeepInspect(paths, tunnel = this.$store.state) {
             let name = null
             if (Boolean(paths.length)) {
                 name = paths.shift()
@@ -421,15 +426,17 @@ export default {
         },
 
         /**
-         * @name 格式化模型
-         * @description 框架内方法，业务层无需使用
+         * 格式化模型
+         * @overview 框架内方法，业务层无需使用
+         * @param {string} [path] - 模型路径
+         * @param {string} [action] - 执行动作
          */
-        ModelFormat(paths, action='') {
+        ModelFormat(paths, action = '') {
             
             const StoreDeepInspect = location => {
                 return this.StoreDeepInspect(location)
             }
-            class ModelPath {
+            class ModelProxy {
                 constructor({ store, model, action, action_path }) {
                     this.store = store
                     this.model = model
@@ -482,11 +489,7 @@ export default {
             //     }
             // }
             
-            return new ModelPath({store, model, action, action_path})
-        },
-
-        // ModelParamType(sample) {
-
-        // }
+            return new ModelProxy({store, model, action, action_path})
+        }
     }
 }

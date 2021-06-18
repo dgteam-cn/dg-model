@@ -74,10 +74,10 @@ const FETCH = function({state, dispatch, commit}, config={}) {
 
         if (this.fetch.socket && this.fetch.socket.status === 'online' && this.fetch.handle === 'auto' && config.use != 'ajax') {
             config.use = 'socket'
-            return this.fetch.socket.proxy({getCancel, ...config}).then( callback.success, callback.error )
+            return this.fetch.socket.proxy({getCancel, ...config}).then(callback.success, callback.error)
         } else {
             config.use = 'ajax'
-            return this.fetch.ajax({getCancel, ...config}).then( callback.success, callback.error )
+            return this.fetch.ajax({getCancel, ...config}).then(callback.success, callback.error)
         }
     })
 }
