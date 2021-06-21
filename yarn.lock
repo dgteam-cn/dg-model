@@ -900,14 +900,16 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@dgteam/helper@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@dgteam/helper/-/helper-0.2.2.tgz#9cc90925ea9950efaa01cfbb0ac713ed6a3219af"
-  integrity sha512-+EZyptEGUjUDOUY5RuM7dXloGXXh2Avvom1zrLoSu5RospAmzn9pVUHnVbKf79cskY46JRrgrQxB+60YenDJdQ==
+"@dgteam/eslint-config-team@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.nlark.com/@dgteam/eslint-config-team/download/@dgteam/eslint-config-team-0.1.1.tgz?cache=0&sync_timestamp=1623901092031&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40dgteam%2Feslint-config-team%2Fdownload%2F%40dgteam%2Feslint-config-team-0.1.1.tgz#cb3459d09650b53c3de3e5de60ef99ab2e521e8d"
+  integrity sha1-yzRZ0JZQtTw94+XeYO+Zqy5SHo0=
+
+"@dgteam/helper@^0.2.7":
+  version "0.2.7"
+  resolved "https://registry.nlark.com/@dgteam/helper/download/@dgteam/helper-0.2.7.tgz#6dd110fc896e3141337b6dbee995bbc1c8e1f63a"
+  integrity sha1-bdEQ/IluMUEze22+6ZW7wcjh9jo=
   dependencies:
-    "@types/big.js" "^4.0.5"
-    "@types/js-base64" "^2.3.1"
-    "@types/js-md5" "^0.4.2"
     big.js "^5.2.2"
     js-base64 "^2.5.2"
     js-md5 "^0.7.3"
@@ -1001,11 +1003,6 @@
   resolved "https://registry.yarnpkg.com/@types/anymatch/-/anymatch-1.3.1.tgz#336badc1beecb9dacc38bea2cf32adf627a8421a"
   integrity sha512-/+CRPXpBDpo2RK9C68N3b2cOvO0Cf5B9aPijHsoDQTHivnGSObdOF2BRQOYjojWTDy6nQvMjmqRXIxH55VjxxA==
 
-"@types/big.js@^4.0.5":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@types/big.js/-/big.js-4.0.5.tgz#62c61697646269e39191f24e55e8272f05f21fc0"
-  integrity sha512-D9KFrAt05FDSqLo7PU9TDHfDgkarlwdkuwFsg7Zm4xl62tTNaz+zN+Tkcdx2wGLBbSMf8BnoMhOVeUGUaJfLKg==
-
 "@types/body-parser@*":
   version "1.19.0"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.0.tgz#0685b3c47eb3006ffed117cdd55164b61f80538f"
@@ -1076,16 +1073,6 @@
   integrity sha512-IrSHl2u6AWXduUaDLqYpt45tLVCtYv7o4Z0s1KghBCDgIIS9oW5K1H8mZG/A2CfeLdEa7rTd1ACOiHBc1EMT2Q==
   dependencies:
     "@types/node" "*"
-
-"@types/js-base64@^2.3.1":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@types/js-base64/-/js-base64-2.3.2.tgz#266be882b28b52649b1d34db9515e54c8ef783f2"
-  integrity sha512-iGjZEnheu9n53fhlU+QLovdKHsdwPJ79iammNM0opTEp18zcJ/nNAIthuMilJoDPNUQHoqRAJdDNI5rxHY4nkA==
-
-"@types/js-md5@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@types/js-md5/-/js-md5-0.4.2.tgz#95b39911e2081bf2915436e61cc345e12459e5bb"
-  integrity sha512-FUPoQkpQTzA5wz9ebrdVRjsjQsFehr+cW1CVhLcI2UwD/SO/4NHPO1esrXPPbx7ux762U0POmWFSrUjQq2ophw==
 
 "@types/json-schema@^7.0.5":
   version "7.0.6"

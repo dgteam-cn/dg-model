@@ -5,7 +5,7 @@ import Model from './main.js'
 // import throttle from 'lodash/throttle'
 
 
-const ACTIVE = function(model){
+const ACTIVE = function(model) {
 
     const MODEL = model.toUpperCase()
 
@@ -31,7 +31,7 @@ const ACTIVE = function(model){
                 }
             } else {
                 // 以索引来确定焦点，（ -1 = 选择数组的最后一个）
-                if (active==-1) {
+                if (active == -1) {
                     active = state[model].list.length > 0 ? state[model].list.length - 1 : 0
                 }
                 // 如果焦点不存在则默认使用原焦点，如果原焦点不存在则默认使用 0
@@ -44,22 +44,22 @@ const ACTIVE = function(model){
                 }
                 // 如果列表存在键值
                 if (state[model].list && state[model].list[active]) {
-                    return dispatch(`ACTIVE_${MODEL}_CHANGE`, {id: state[model].list[active].id, active, item: state[model].list[active]})
+                    return dispatch(ACTIVE_MODEL_CHANGE, {id: state[model].list[active].id, active, item: state[model].list[active]})
                 }
-                dispatch(`ACTIVE_${MODEL}_RESET`)
+                dispatch(ACTIVE_MODEL_RESET)
             }
         },
 
-        [ACTIVE_MODEL_CHANGE]({commit}, config={}){
+        [ACTIVE_MODEL_CHANGE]({commit}, config={}) {
             for (const key of ['id', 'active', 'item']) {
                 if (config[key] || config[key] == 0) {
-                    commit('MODEL_UPDATE', [model, key, config[key]])      
+                    commit('MODEL_UPDATE', [model, key, config[key]])
                 }
             }
             return config.item
         },
 
-        [ACTIVE_MODEL_RESET]({commit}){
+        [ACTIVE_MODEL_RESET]({commit}) {
             for (const key of ['id', 'active', 'item']) {
                 commit('MODEL_UPDATE', [model, key, undefined])
             }
@@ -69,7 +69,7 @@ const ACTIVE = function(model){
 }
 
 const RESTFUL = function(model, {state, fetch}) {
-    
+
     const MODEL = model.toUpperCase()
     const opt = state[model].options
     const apis = {}
@@ -94,10 +94,10 @@ const RESTFUL = function(model, {state, fetch}) {
              */
             const getRESTfulConfig = (key, method) => {
                 let infer = false
-                if (typeof key === 'string') {                    
+                if (typeof key === 'string') {
                     if (data[key]) {
                         // 优先从 action 的 data 中获取
-                        infer = data[key] 
+                        infer = data[key]
                     } else if (opt[method] && opt[method][key]) {
                         // 否则从 model 的 options 中获取
                         infer = opt[method][key]
@@ -136,7 +136,7 @@ const RESTFUL = function(model, {state, fetch}) {
                     paths.push(route)
                 }
             }
-            
+
             const fetchData = {
                 method, model,
                 url: data.id ? `${paths.join('/')}/${data.id}` : paths.join('/'),
@@ -154,8 +154,8 @@ const RESTFUL = function(model, {state, fetch}) {
                 for (const key in fetchData.limit) {
                     for (const name of ['params', 'paths', 'data']) {
                         if (
-                            (method === 'GET' && name === 'params') ||
-                            (method !== 'GET' && name === 'data') ||
+                            method === 'GET' && name === 'params' ||
+                            method !== 'GET' && name === 'data' ||
                             name === 'paths'
                         ) {
                             fetchData[name][key] = fetchData.limit[key]
@@ -203,7 +203,7 @@ const RESTFUL = function(model, {state, fetch}) {
                         commit('MODEL_UPDATE', [model, 'item', res.result || res])
                     }
                 },
-                
+
                 POST: ({state, commit, model}, res, config) => {
                     const interact = getRESTfulConfig('interact', 'POST')
                     if (interact && res.result && res.result.id) {
@@ -250,7 +250,7 @@ const RESTFUL = function(model, {state, fetch}) {
                             commit('MODEL_UPDATE', [model, 'more', false])
                         }
                     }
-                } 
+                }
             }
 
             // fetch 主函数

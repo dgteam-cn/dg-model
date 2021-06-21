@@ -83,6 +83,7 @@ const MODEL_MORE = function(state, [model, key='list', value]){
         }
     }
 }
+// TODO base 之后需要改成 model
 const MODEL_REMOVE = function(state, {base, key, id, index}){
     if (id) {
         let list = state[base][key]
