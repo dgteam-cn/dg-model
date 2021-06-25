@@ -1,8 +1,7 @@
 import helper from './helper'
 import {Item} from './class'
 import Model from './main.js'
-// import debounce from 'lodash/debounce'
-// import throttle from 'lodash/throttle'
+// import {debounce, throttle} from '@dgteam/helper/dist/lodash.js'
 
 
 const ACTIVE = function(model) {

@@ -13,7 +13,7 @@ const FETCH = function({state, dispatch, commit}, config={}) {
     }
     if (state[model] && state[model].auth) {
         config.headers['Identity'] = state[model].auth
-        if(!config.auth){
+        if (!config.auth) {
             config.auth = state[model].auth
         }
     }
@@ -31,7 +31,7 @@ const FETCH = function({state, dispatch, commit}, config={}) {
             if (config.paths && config.paths[key] != undefined) {
                 paths.push(config.paths[key])
                 delete config.paths[key]
-            } else if(config.params && config.params[key] != undefined) {
+            } else if (config.params && config.params[key] != undefined) {
                 paths.push(config.params[key])
                 delete config.params[key]
             } else {
@@ -42,7 +42,7 @@ const FETCH = function({state, dispatch, commit}, config={}) {
         }
     }
     config.url = paths.join('/')
-    
+
     return new Promise(resolve => {
 
         const callback = {
@@ -55,7 +55,7 @@ const FETCH = function({state, dispatch, commit}, config={}) {
                     resolve({data: res.data, config: res.config})
                 } else {
                     resolve({...res.data, config: res.config})
-                }                        
+                }
             },
             // 失败回调
             error: res => {
@@ -94,8 +94,8 @@ const GET = function({dispatch}, config) {
 }
 // Fetch 结束请求
 const FETCH_FINISH = function({state, dispatch, commit}, [model, id]=[]) {
-    for(let i=0; i<state[model].ajax.length; i++){
-        if(state[model].ajax[i].id === id){
+    for (let i=0; i<state[model].ajax.length; i++) {
+        if (state[model].ajax[i].id === id) {
             commit('MODEL_REMOVE', {base: model, key: 'ajax', index: i})
             return commit('FETCH_UPDATE', [model])
         }
@@ -104,7 +104,7 @@ const FETCH_FINISH = function({state, dispatch, commit}, [model, id]=[]) {
 
 // 本地请求
 const MOCK = function() {
-    
+
 }
 
 export {

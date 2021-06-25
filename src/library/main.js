@@ -2,11 +2,10 @@ import Vue from 'vue'
 import helper from './helper'
 import * as Mutations from "./mutations"
 import * as Actions from "./actions"
-import { ACTIVE, RESTFUL } from "./factory"
-import { List } from './class'
+import {ACTIVE, RESTFUL} from "./factory"
 import pkg from '../../package.json'
-const { FETCH, GET, FETCH_FINISH } = Actions
-const { 
+const {FETCH, GET, FETCH_FINISH} = Actions
+const {
     FETCH_REMOVE, FETCH_CANCEL, FETCH_UPDATE,
     MODEL_ADD, MODEL_MORE, MODEL_UPDATE, MODEL_REMOVE, MODEL_RESET,
     MODEL_ROW_EXTEND
@@ -33,14 +32,14 @@ class Model {
 
     static Mutations = Mutations
     static Actions = Actions
-    static Factory = { ACTIVE, RESTFUL }
+    static Factory = {ACTIVE, RESTFUL}
     static Options = {
         version: pkg.version,
         fetch: {
-            ajax: null, 
-            socket: null, 
+            ajax: null,
+            socket: null,
             handle: 'auto', // 使用模式 [ajax | scocket | auto]
-            beforeFetch: null,            
+            beforeFetch: null,
             beforeRestful: null,
             afterFetch: null,
             afterRestful: null
@@ -66,23 +65,23 @@ class Model {
     }
 
     // 安装默认配置
-    static install(opt){
+    static install(opt) {
         for (let key of ['fetch', 'RESTful']) {
             if (opt && opt[key] && typeof opt[key] === 'object') {
                 Model.Options[key] = Object.assign(Model.Options[key], opt[key])
             }
         }
     }
-    
+
     // 注册新模型
-    static register(model, options){
+    static register(model, options) {
 
     }
 
-    constructor(opt={}){
-       
+    constructor(opt={}) {
+
         this.store = opt.store
-        this.auth = opt.auth        
+        this.auth = opt.auth
         this.fetch = Object.assign(Model.Options.fetch, opt.fetch)
         this.namespaced = true
 
@@ -95,7 +94,7 @@ class Model {
 
         // 遍历所有 state 查找 dgx 模块并创建方法
         for (let model in this.state) {
-            if(helper.IsObject(this.state[model]) && this.state[model].options){
+            if (helper.IsObject(this.state[model]) && this.state[model].options) {
 
                 if (typeof options === 'string') {
                     options = {url: options}
@@ -112,14 +111,14 @@ class Model {
                     init: false,
                     loading: false,
                     editing: false,
-                    ajax: [], //new List(),
+                    ajax: [],
                     error: false,
                     page: 1,
                     marker: undefined,
                     total: null,
                     count: undefined,
                     empty: false,
-                    list: [], // new List(),
+                    list: [],
                     filter: {},
                     id: null,
                     active: null,
@@ -128,7 +127,7 @@ class Model {
                 Vue.set(this.state[model], 'reset', Object.assign({}, this.state[model]))
 
                 // 合并工厂方法
-                this.actions = Object.assign(this.actions, ACTIVE(model, this), RESTFUL(model, this))                 
+                this.actions = Object.assign(this.actions, ACTIVE(model, this), RESTFUL(model, this))
             }
         }
     }
