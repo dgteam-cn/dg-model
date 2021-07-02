@@ -7,9 +7,11 @@ exports.MODEL_RESET = exports.MODEL_REMOVE = exports.MODEL_ROW_EXTEND = exports.
 
 var _vue = _interopRequireDefault(require("vue"));
 
+var _main = _interopRequireDefault(require("./main.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -21,7 +23,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -134,9 +136,12 @@ var FETCH_UPDATE = function FETCH_UPDATE(state) {
   _vue["default"].set(state[model], 'editing', editing);
 };
 /**
- * @name 模型添加
- * @param {*} state 
- * @param {*} param1 
+ * @name 模型添加数据（到数组）
+ * @param {object} state
+ * @param {string} agrs[model] = 模型名称
+ * @param {string} agrs[key] = 模型键（必须对应数组）
+ * @param {any} agrs[value] = 值
+ * @param {number|string} agrs[position] = 添加位置
  */
 
 
@@ -155,7 +160,7 @@ var MODEL_ADD = function MODEL_ADD(state) {
   if (typeof position === 'string') {
     if (~['start', 'begin', 'head'].indexOf(position)) {
       position = 0;
-    } else if (~['end', 'finish', 'foot', 'last'].indexOf(position)) {
+    } else if (~['end', 'foot', 'last'].indexOf(position)) {
       position = -1;
     } else {
       position = parseInt(position);
@@ -195,51 +200,61 @@ var MODEL_MORE = function MODEL_MORE(state, _ref9) {
       _iterator3.f();
     }
   }
-};
+}; // TODO base 之后需要改成 model
+
 
 exports.MODEL_MORE = MODEL_MORE;
 
 var MODEL_REMOVE = function MODEL_REMOVE(state, _ref11) {
-  var base = _ref11.base,
-      key = _ref11.key,
-      id = _ref11.id,
-      index = _ref11.index;
+  var _ref12 = _slicedToArray(_ref11, 2),
+      model = _ref12[0],
+      id = _ref12[1];
 
-  if (id) {
-    var list = state[base][key];
+  // if (id) {
+  //     let list = state[base][key]
+  //     for (let i=0; i < list.length; i++) {
+  //         if (list[i].id == id) {
+  //             state[base][key].splice(i, 1)
+  //             break;
+  //         }
+  //     }
+  // } else if (index || index == 0) {
+  //     state[base][key].splice(index, 1)
+  // } else {
+  //     delete state[base][key]
+  // }
+  var primaryKey = _main["default"].config.primaryKey;
+  var index = state[model].list.findIndex(function (item) {
+    return item[primaryKey] && item[primaryKey] === id;
+  });
 
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].id == id) {
-        state[base][key].splice(i, 1);
-        break;
-      }
-    }
-  } else if (index || index == 0) {
-    state[base][key].splice(index, 1);
-  } else {
-    delete state[base][key];
+  if (index >= 0) {
+    state[model].list.splice(index, 1);
   }
 };
 
 exports.MODEL_REMOVE = MODEL_REMOVE;
 
 var MODEL_RESET = function MODEL_RESET(state, model) {
-  if (model && state[model] && state[model].reset) {
-    var reset = Object.assign({}, state[model].reset);
-    state[model] = Object.assign({}, reset);
-    state[model].reset = Object.assign({}, reset);
-  }
+  var models = Array.isArray(model) ? model : [model];
+  models.forEach(function (name) {
+    if (name && state[name] && state[name].reset) {
+      var reset = Object.assign({}, state[name].reset);
+      state[name] = Object.assign({}, reset);
+      state[name].reset = Object.assign({}, reset);
+    }
+  });
 };
 
 exports.MODEL_RESET = MODEL_RESET;
 
 var MODEL_UPDATE = function MODEL_UPDATE(state) {
-  var _ref12 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [],
-      _ref13 = _slicedToArray(_ref12, 3),
-      model = _ref13[0],
-      _ref13$ = _ref13[1],
-      key = _ref13$ === void 0 ? 'list' : _ref13$,
-      value = _ref13[2];
+  var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [],
+      _ref14 = _slicedToArray(_ref13, 3),
+      model = _ref14[0],
+      _ref14$ = _ref14[1],
+      key = _ref14$ === void 0 ? 'list' : _ref14$,
+      value = _ref14[2];
 
   if (_typeof(key) === 'object') {
     for (var k in key) {
@@ -253,14 +268,15 @@ var MODEL_UPDATE = function MODEL_UPDATE(state) {
 exports.MODEL_UPDATE = MODEL_UPDATE;
 
 var MODEL_ROW_EXTEND = function MODEL_ROW_EXTEND(state) {
-  var _ref14 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [],
-      _ref15 = _slicedToArray(_ref14, 3),
-      model = _ref15[0],
-      item = _ref15[1],
-      relation = _ref15[2];
+  var _ref15 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [],
+      _ref16 = _slicedToArray(_ref15, 2),
+      model = _ref16[0],
+      item = _ref16[1];
 
   try {
-    if (item.id) {
+    var primaryKey = _main["default"].config.primaryKey;
+
+    if (item[primaryKey]) {
       var _iterator4 = _createForOfIteratorHelper(state[model].list),
           _step4;
 
@@ -268,7 +284,7 @@ var MODEL_ROW_EXTEND = function MODEL_ROW_EXTEND(state) {
         for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
           var _row = _step4.value;
 
-          if (_row.id && _row.id === item.id) {
+          if (_row[primaryKey] && _row[primaryKey] === item[primaryKey]) {
             Object.assign(_row, item);
           }
         }
@@ -281,7 +297,7 @@ var MODEL_ROW_EXTEND = function MODEL_ROW_EXTEND(state) {
       if (state[model].item) {
         var row = state[model].item;
 
-        if (row.id && row.id === item.id) {
+        if (row[primaryKey] && row[primaryKey] === item[primaryKey]) {
           Object.assign(row, item);
         }
       }

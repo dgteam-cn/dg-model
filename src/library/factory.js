@@ -1,5 +1,4 @@
 import helper from './helper'
-import {Item} from './class'
 import Model from './main.js'
 // import {debounce, throttle} from '@dgteam/helper/dist/lodash.js'
 
@@ -22,10 +21,12 @@ const ACTIVE = function(model) {
                 dispatch(ACTIVE_MODEL_RESET)
             } else if (typeof active === "object") {
                 // 以 对象条件 来确定焦点
+                const item = active
                 const list = state[model].list
+                const {primaryKey} = Model.config
                 for (let i = 0; i < list.length; i++) {
-                    if (active.id && list[i].id && list[i].id === active.id) {
-                        return dispatch(ACTIVE_MODEL_CHANGE, {id: list[i].id || undefined, active: i, item: list[i]})
+                    if (item[primaryKey] && list[i][primaryKey] && list[i][primaryKey] === item[primaryKey]) {
+                        return dispatch(ACTIVE_MODEL_CHANGE, {[primaryKey]: list[i][primaryKey] || undefined, active: i, item: list[i]})
                     }
                 }
             } else {
@@ -43,14 +44,15 @@ const ACTIVE = function(model) {
                 }
                 // 如果列表存在键值
                 if (state[model].list && state[model].list[active]) {
-                    return dispatch(ACTIVE_MODEL_CHANGE, {id: state[model].list[active].id, active, item: state[model].list[active]})
+                    const {primaryKey} = Model.config
+                    return dispatch(ACTIVE_MODEL_CHANGE, {[primaryKey]: state[model].list[active][primaryKey], active, item: state[model].list[active]})
                 }
                 dispatch(ACTIVE_MODEL_RESET)
             }
         },
 
-        [ACTIVE_MODEL_CHANGE]({commit}, config={}) {
-            for (const key of ['id', 'active', 'item']) {
+        [ACTIVE_MODEL_CHANGE]({commit}, config = {}) {
+            for (const key of ['active', 'item']) {
                 if (config[key] || config[key] == 0) {
                     commit('MODEL_UPDATE', [model, key, config[key]])
                 }
@@ -59,7 +61,7 @@ const ACTIVE = function(model) {
         },
 
         [ACTIVE_MODEL_RESET]({commit}) {
-            for (const key of ['id', 'active', 'item']) {
+            for (const key of ['active', 'item']) {
                 commit('MODEL_UPDATE', [model, key, undefined])
             }
         }
@@ -67,7 +69,7 @@ const ACTIVE = function(model) {
     return apis
 }
 
-const RESTFUL = function(model, {state, fetch}) {
+const RESTFUL = function(model, {state}) {
 
     const MODEL = model.toUpperCase()
     const opt = state[model].options
@@ -102,12 +104,12 @@ const RESTFUL = function(model, {state, fetch}) {
                         infer = opt[method][key]
                     } else if (opt[key]) {
                         infer = opt[key]
-                    } else if (typeof Model.Options.RESTful === 'object') {
+                    } else if (typeof Model.config.RESTful === 'object') {
                         // 尝试在全局属性中获取
-                        if (typeof Model.Options.RESTful[method] === 'object' && Model.Options.RESTful[method][key]) {
-                            infer = Model.Options.RESTful[method][key]
-                        } else if (Model.Options.RESTful[key]) {
-                            infer = Model.Options.RESTful[key]
+                        if (typeof Model.config.RESTful[method] === 'object' && Model.config.RESTful[method][key]) {
+                            infer = Model.config.RESTful[method][key]
+                        } else if (Model.config.RESTful[key]) {
+                            infer = Model.config.RESTful[key]
                         }
                     }
                     if (infer === true && key === 'only') {
@@ -179,13 +181,14 @@ const RESTFUL = function(model, {state, fetch}) {
                     const interact = getRESTfulConfig('interact', 'GET')
                     if (config.id) {
                         if (interact) {
-                            commit('MODEL_UPDATE', [model, 'id', res.result.id])
-                            commit('MODEL_UPDATE', [model, 'item', res.result]) // new Item(res.result)
+                            // TODO 此处可能不会触发 model.active 字段
+                            // commit('MODEL_UPDATE', [model, 'id', res.result.id])
+                            commit('MODEL_UPDATE', [model, 'item', res.result])
                         }
                     } else if (Array.isArray(res.result)) {
                         if (interact) {
                             if (name === 'MORE') {
-                                commit('MODEL_MORE', [model, 'list', res.result]) // new List(res.result)
+                                commit('MODEL_MORE', [model, 'list', res.result])
                             } else {
                                 commit('MODEL_UPDATE', [model, 'list', res.result])
                             }
@@ -196,23 +199,24 @@ const RESTFUL = function(model, {state, fetch}) {
                         commit('MODEL_UPDATE', [model, 'total', res.total])
                         commit('MODEL_UPDATE', [model, 'empty', !!(res.page == 1 && !res.result.length)])
                         commit('MODEL_UPDATE', [model, 'more', res.page < res.total])
-                        commit('MODEL_UPDATE', [model, 'filter', config.params ? helper.Origin(config.params) : {}])
+                        commit('MODEL_UPDATE', [model, 'filter', config.params ? helper.originJSON(config.params) : {}])
                     } else if (interact) {
-                        commit('MODEL_UPDATE', [model, 'list', res.result || res]) // new List(res.result)
+                        commit('MODEL_UPDATE', [model, 'list', res.result || res])
                         commit('MODEL_UPDATE', [model, 'item', res.result || res])
                     }
                 },
 
                 POST: ({state, commit, model}, res, config) => {
                     const interact = getRESTfulConfig('interact', 'POST')
-                    if (interact && res.result && res.result.id) {
+                    const {primaryKey} = Model.config
+                    if (interact && res.result && res.result[primaryKey]) {
                         let position = 'end' // 判定增加数据的位置
                         if (typeof interact === 'object' && interact.position) {
                             position = interact.position
                         } else if (typeof interact === 'number' || ~['start', 'begin', 'head', 'end', 'finish', 'foot', 'last'].indexOf(interact)) {
                             position = interact
                         }
-                        commit('MODEL_ADD', [model, 'list', new Item(res.result), position])
+                        commit('MODEL_ADD', [model, 'list', res.result, position])
                         if (state[model].count != undefined && state[model].count >= 0) {
                             commit('MODEL_UPDATE', [model, 'count', state[model].count + 1])
                         }
@@ -225,7 +229,8 @@ const RESTFUL = function(model, {state, fetch}) {
 
                 PUT: ({commit, model}, res, config) => {
                     const interact = getRESTfulConfig('interact', 'PUT')
-                    if (interact && res.result && res.result.id) {
+                    const {primaryKey} = Model.config
+                    if (interact && res.result && res.result[primaryKey]) {
                         commit('MODEL_ROW_EXTEND', [model, res.result])
                     }
                 },
@@ -233,9 +238,10 @@ const RESTFUL = function(model, {state, fetch}) {
                 DELETE: ({state, commit, model}, res, config) => {
                     const interact = getRESTfulConfig('interact', 'DELETE')
                     if (interact) {
-                        commit('MODEL_REMOVE', {base: model, id: config.id,  key: 'list'})
-                        if (state[model].item && state[model].item.id === config.id) {
-                            commit('MODEL_UPDATE', [model, 'id', null])
+                        const {primaryKey} = Model.config
+                        commit('MODEL_REMOVE', [model, config.id])
+                        if (state[model].item && state[model].item[primaryKey] === config.id) {
+                            // commit('MODEL_UPDATE', [model, 'id', null])
                             commit('MODEL_UPDATE', [model, 'active', null])
                             commit('MODEL_UPDATE', [model, 'item', null])
                         }

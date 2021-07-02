@@ -1,7 +1,8 @@
 import Vue from 'vue'
+import Model from './main.js'
 
 // Fetch 数据移除
-const FETCH_REMOVE = function(state, [model, index]=[]) {
+const FETCH_REMOVE = function(state, [model, index] = []) {
     state[model].ajax.splice(index, 1)
 }
 
@@ -36,10 +37,10 @@ const FETCH_CANCEL = function(state, [model, only, id]) {
 }
 
 // Fetch 数据更新
-const FETCH_UPDATE = function(state, [model]=[]) {
+const FETCH_UPDATE = function(state, [model] = []) {
     let loading = 0
     let editing = 0
-    for (let fetch of state[model].ajax) {
+    for (const fetch of state[model].ajax) {
         if (fetch.method) {
             let method = fetch.method.toUpperCase()
             if (method === 'GET') {
@@ -53,16 +54,20 @@ const FETCH_UPDATE = function(state, [model]=[]) {
     Vue.set(state[model], 'editing', editing)
 }
 
+
 /**
- * @name 模型添加
- * @param {*} state
- * @param {*} param1
+ * @name 模型添加数据（到数组）
+ * @param {object} state
+ * @param {string} agrs[model] = 模型名称
+ * @param {string} agrs[key] = 模型键（必须对应数组）
+ * @param {any} agrs[value] = 值
+ * @param {number|string} agrs[position] = 添加位置
  */
-const MODEL_ADD = function(state, [model, key='ajax', value, position=-1]=[]) {
+const MODEL_ADD = function(state, [model, key = 'ajax', value, position = -1] = []) {
     if (typeof position === 'string') {
         if (~['start', 'begin', 'head'].indexOf(position)) {
             position = 0
-        } else if (~['end', 'finish', 'foot', 'last'].indexOf(position)) {
+        } else if (~['end', 'foot', 'last'].indexOf(position)) {
             position = -1
         } else {
             position = parseInt(position)
@@ -76,35 +81,44 @@ const MODEL_ADD = function(state, [model, key='ajax', value, position=-1]=[]) {
         state[model][key].splice(position, 0, value)
     }
 }
-const MODEL_MORE = function(state, [model, key='list', value]) {
+const MODEL_MORE = function(state, [model, key = 'list', value]) {
     if (Array.isArray(value)) {
         for (let item of value) {
             state[model][key].push(item)
         }
     }
 }
+
 // TODO base 之后需要改成 model
-const MODEL_REMOVE = function(state, {base, key, id, index}) {
-    if (id) {
-        let list = state[base][key]
-        for (let i=0; i < list.length; i++) {
-            if (list[i].id == id) {
-                state[base][key].splice(i, 1)
-                break;
-            }
-        }
-    } else if (index || index == 0) {
-        state[base][key].splice(index, 1)
-    } else {
-        delete state[base][key]
+const MODEL_REMOVE = function(state, [model, id]) {
+    // if (id) {
+    //     let list = state[base][key]
+    //     for (let i=0; i < list.length; i++) {
+    //         if (list[i].id == id) {
+    //             state[base][key].splice(i, 1)
+    //             break;
+    //         }
+    //     }
+    // } else if (index || index == 0) {
+    //     state[base][key].splice(index, 1)
+    // } else {
+    //     delete state[base][key]
+    // }
+    const {primaryKey} = Model.config
+    const index = state[model].list.findIndex(item => item[primaryKey] && item[primaryKey] === id)
+    if (index >= 0) {
+        state[model].list.splice(index, 1)
     }
 }
 const MODEL_RESET = function(state, model) {
-    if (model && state[model] && state[model].reset) {
-        let reset = Object.assign({}, state[model].reset)
-        state[model] = Object.assign({}, reset)
-        state[model].reset = Object.assign({}, reset)
-    }
+    const models = Array.isArray(model) ? model : [model]
+    models.forEach(name => {
+        if (name && state[name] && state[name].reset) {
+            let reset = Object.assign({}, state[name].reset)
+            state[name] = Object.assign({}, reset)
+            state[name].reset = Object.assign({}, reset)
+        }
+    })
 }
 const MODEL_UPDATE = function(state, [model, key='list', value]=[]) {
     if (typeof key === 'object') {
@@ -115,17 +129,18 @@ const MODEL_UPDATE = function(state, [model, key='list', value]=[]) {
         Vue.set(state[model], key, value)
     }
 }
-const MODEL_ROW_EXTEND = function(state, [model, item, relation] = []) {
+const MODEL_ROW_EXTEND = function(state, [model, item] = []) {
     try {
-        if (item.id) {
+        const {primaryKey} = Model.config
+        if (item[primaryKey]) {
             for (let row of state[model].list) {
-                if (row.id && row.id === item.id) {
+                if (row[primaryKey] && row[primaryKey] === item[primaryKey]) {
                     Object.assign(row, item)
                 }
             }
             if (state[model].item) {
                 let row = state[model].item
-                if (row.id && row.id === item.id) {
+                if (row[primaryKey] && row[primaryKey] === item[primaryKey]) {
                     Object.assign(row, item)
                 }
             }

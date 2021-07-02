@@ -5,15 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RESTFUL = exports.ACTIVE = void 0;
 
-var _helper = _interopRequireDefault(require("@dgteam/helper"));
-
-var _class = require("./class");
+var _helper = _interopRequireDefault(require("./helper"));
 
 var _main = _interopRequireDefault(require("./main.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -23,8 +21,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-// import debounce from 'lodash/debounce'
-// import throttle from 'lodash/throttle'
+// import {debounce, throttle} from '@dgteam/helper/dist/lodash.js'
 var ACTIVE = function ACTIVE(model) {
   var _apis;
 
@@ -45,15 +42,15 @@ var ACTIVE = function ACTIVE(model) {
       dispatch(ACTIVE_MODEL_RESET);
     } else if (_typeof(active) === "object") {
       // 以 对象条件 来确定焦点
+      var item = active;
       var list = state[model].list;
+      var primaryKey = _main["default"].config.primaryKey;
 
       for (var i = 0; i < list.length; i++) {
-        if (active.id && list[i].id && list[i].id === active.id) {
-          return dispatch(ACTIVE_MODEL_CHANGE, {
-            id: list[i].id || undefined,
-            active: i,
-            item: list[i]
-          });
+        if (item[primaryKey] && list[i][primaryKey] && list[i][primaryKey] === item[primaryKey]) {
+          var _dispatch;
+
+          return dispatch(ACTIVE_MODEL_CHANGE, (_dispatch = {}, _defineProperty(_dispatch, primaryKey, list[i][primaryKey] || undefined), _defineProperty(_dispatch, "active", i), _defineProperty(_dispatch, "item", list[i]), _dispatch));
         }
       }
     } else {
@@ -74,20 +71,19 @@ var ACTIVE = function ACTIVE(model) {
 
 
       if (state[model].list && state[model].list[active]) {
-        return dispatch("ACTIVE_".concat(MODEL, "_CHANGE"), {
-          id: state[model].list[active].id,
-          active: active,
-          item: state[model].list[active]
-        });
+        var _dispatch2;
+
+        var _primaryKey = _main["default"].config.primaryKey;
+        return dispatch(ACTIVE_MODEL_CHANGE, (_dispatch2 = {}, _defineProperty(_dispatch2, _primaryKey, state[model].list[active][_primaryKey]), _defineProperty(_dispatch2, "active", active), _defineProperty(_dispatch2, "item", state[model].list[active]), _dispatch2));
       }
 
-      dispatch("ACTIVE_".concat(MODEL, "_RESET"));
+      dispatch(ACTIVE_MODEL_RESET);
     }
   }), _defineProperty(_apis, ACTIVE_MODEL_CHANGE, function (_ref2) {
     var commit = _ref2.commit;
     var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    for (var _i2 = 0, _arr = ['id', 'active', 'item']; _i2 < _arr.length; _i2++) {
+    for (var _i2 = 0, _arr = ['active', 'item']; _i2 < _arr.length; _i2++) {
       var key = _arr[_i2];
 
       if (config[key] || config[key] == 0) {
@@ -99,7 +95,7 @@ var ACTIVE = function ACTIVE(model) {
   }), _defineProperty(_apis, ACTIVE_MODEL_RESET, function (_ref3) {
     var commit = _ref3.commit;
 
-    for (var _i3 = 0, _arr2 = ['id', 'active', 'item']; _i3 < _arr2.length; _i3++) {
+    for (var _i3 = 0, _arr2 = ['active', 'item']; _i3 < _arr2.length; _i3++) {
       var key = _arr2[_i3];
       commit('MODEL_UPDATE', [model, key, undefined]);
     }
@@ -110,8 +106,7 @@ var ACTIVE = function ACTIVE(model) {
 exports.ACTIVE = ACTIVE;
 
 var RESTFUL = function RESTFUL(model, _ref4) {
-  var state = _ref4.state,
-      fetch = _ref4.fetch;
+  var state = _ref4.state;
   var MODEL = model.toUpperCase();
   var opt = state[model].options;
   var apis = {};
@@ -161,12 +156,12 @@ var RESTFUL = function RESTFUL(model, _ref4) {
             infer = opt[method][key];
           } else if (opt[key]) {
             infer = opt[key];
-          } else if (_typeof(_main["default"].Options.RESTful) === 'object') {
+          } else if (_typeof(_main["default"].config.RESTful) === 'object') {
             // 尝试在全局属性中获取
-            if (_typeof(_main["default"].Options.RESTful[method]) === 'object' && _main["default"].Options.RESTful[method][key]) {
-              infer = _main["default"].Options.RESTful[method][key];
-            } else if (_main["default"].Options.RESTful[key]) {
-              infer = _main["default"].Options.RESTful[key];
+            if (_typeof(_main["default"].config.RESTful[method]) === 'object' && _main["default"].config.RESTful[method][key]) {
+              infer = _main["default"].config.RESTful[method][key];
+            } else if (_main["default"].config.RESTful[key]) {
+              infer = _main["default"].config.RESTful[key];
             }
           }
 
@@ -258,13 +253,14 @@ var RESTFUL = function RESTFUL(model, _ref4) {
 
           if (config.id) {
             if (interact) {
-              commit('MODEL_UPDATE', [model, 'id', res.result.id]);
-              commit('MODEL_UPDATE', [model, 'item', res.result]); // new Item(res.result)
+              // TODO 此处可能不会触发 model.active 字段
+              // commit('MODEL_UPDATE', [model, 'id', res.result.id])
+              commit('MODEL_UPDATE', [model, 'item', res.result]);
             }
           } else if (Array.isArray(res.result)) {
             if (interact) {
               if (name === 'MORE') {
-                commit('MODEL_MORE', [model, 'list', res.result]); // new List(res.result)
+                commit('MODEL_MORE', [model, 'list', res.result]);
               } else {
                 commit('MODEL_UPDATE', [model, 'list', res.result]);
               }
@@ -276,10 +272,9 @@ var RESTFUL = function RESTFUL(model, _ref4) {
             commit('MODEL_UPDATE', [model, 'total', res.total]);
             commit('MODEL_UPDATE', [model, 'empty', !!(res.page == 1 && !res.result.length)]);
             commit('MODEL_UPDATE', [model, 'more', res.page < res.total]);
-            commit('MODEL_UPDATE', [model, 'filter', config.params ? _helper["default"].Origin(config.params) : {}]);
+            commit('MODEL_UPDATE', [model, 'filter', config.params ? _helper["default"].originJSON(config.params) : {}]);
           } else if (interact) {
-            commit('MODEL_UPDATE', [model, 'list', res.result || res]); // new List(res.result)
-
+            commit('MODEL_UPDATE', [model, 'list', res.result || res]);
             commit('MODEL_UPDATE', [model, 'item', res.result || res]);
           }
         },
@@ -288,8 +283,9 @@ var RESTFUL = function RESTFUL(model, _ref4) {
               commit = _ref7.commit,
               model = _ref7.model;
           var interact = getRESTfulConfig('interact', 'POST');
+          var primaryKey = _main["default"].config.primaryKey;
 
-          if (interact && res.result && res.result.id) {
+          if (interact && res.result && res.result[primaryKey]) {
             var position = 'end'; // 判定增加数据的位置
 
             if (_typeof(interact) === 'object' && interact.position) {
@@ -298,7 +294,7 @@ var RESTFUL = function RESTFUL(model, _ref4) {
               position = interact;
             }
 
-            commit('MODEL_ADD', [model, 'list', new _class.Item(res.result), position]);
+            commit('MODEL_ADD', [model, 'list', res.result, position]);
 
             if (state[model].count != undefined && state[model].count >= 0) {
               commit('MODEL_UPDATE', [model, 'count', state[model].count + 1]);
@@ -314,8 +310,9 @@ var RESTFUL = function RESTFUL(model, _ref4) {
           var commit = _ref8.commit,
               model = _ref8.model;
           var interact = getRESTfulConfig('interact', 'PUT');
+          var primaryKey = _main["default"].config.primaryKey;
 
-          if (interact && res.result && res.result.id) {
+          if (interact && res.result && res.result[primaryKey]) {
             commit('MODEL_ROW_EXTEND', [model, res.result]);
           }
         },
@@ -326,14 +323,11 @@ var RESTFUL = function RESTFUL(model, _ref4) {
           var interact = getRESTfulConfig('interact', 'DELETE');
 
           if (interact) {
-            commit('MODEL_REMOVE', {
-              base: model,
-              id: config.id,
-              key: 'list'
-            });
+            var primaryKey = _main["default"].config.primaryKey;
+            commit('MODEL_REMOVE', [model, config.id]);
 
-            if (state[model].item && state[model].item.id === config.id) {
-              commit('MODEL_UPDATE', [model, 'id', null]);
+            if (state[model].item && state[model].item[primaryKey] === config.id) {
+              // commit('MODEL_UPDATE', [model, 'id', null])
               commit('MODEL_UPDATE', [model, 'active', null]);
               commit('MODEL_UPDATE', [model, 'item', null]);
             } // 影响统计数

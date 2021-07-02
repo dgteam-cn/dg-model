@@ -12,22 +12,18 @@
 ⬜ 支持中间件（拦截器）
 ⬜ 支持使用对象引用 store // 使用别名
 ⬜ 支持动态增加模型
-⬜ 支持本地 MOCK 支持，并且对 RESEFUL 操作能产生联动效果
+❌ 支持本地 MOCK 支持，并且对 RESEFUL 操作能产生联动效果: 应当使用 mockjs 等方案在外部实现
 ❌ 增加 List 类
     => vue 会改写 Array 对象的 __proto__ 原型对象
 ✅ 增加 Item 类, 在 Item 对象中打上模型的引用戳
 ✅ GET => FETCH {method: 'GET'} 的语法糖
-❌ POST => FETCH {method: 'POST'} 的语法糖
-❌ PUT => FETCH {method: 'PUT'} 的语法糖
-❌ DELETE => FETCH {method: 'DELETE'} 的语法糖
 ⬜ URL 类（格式解析）
-⬜ 在 Submit 等方法传入系统的 $event 值时候的报错
+✅ 在 Submit 等方法传入系统的 $event 值时候的报错
 ✅ [❗❗❗] Item 方法不返回 res 已修复
     => 为确保链式调用，其他不按 res 格式返回的接口会陆续改回 res 格式（{err: 0, msg: '', result}）
 ✅ RESFUL 增加 only 特性，同一类型在结果成功返回时候只能请求一次
 🔶 增加 limit（自配 + 公配） 提交 GET POST PUT DELETE 请求时候强制覆盖 params 或 paths 或 data
-⬜ ? model options 可以用字符串声明，则自动指向 url 字段
-⬜ 增加 public 属性，在设为 true 时候，退出登录该模块不会被清除
+✅ 增加 public 属性，在设为 true 时候，退出登录该模块不会被清除
 
 === BUG ===
 ✅ 低网络状态下，请求超时后无法移除 AJAX 队列
@@ -46,3 +42,10 @@
 ### 0.2.8
 ✅  POST 方法进行数据联动时候，没有正确打破 empty = true
 ✅  DELETE 方法进行数据联动时候，没有配置联动也会自动进行联动的错误
+
+### 0.3.0
+⬜  节流、防抖（不实用 lodash 的方案，而是内部实现）
+⬜  测试 class Item 字段如果是 function 在微信小程序的性能表现（影响 setData ）
+⬜  增加 relation 模型关联
+⬜  后端文档导出（高风险）、拓展表单验证的方法
+⬜  增加四个钩子（中间件函数）

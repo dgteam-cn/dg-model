@@ -128,6 +128,7 @@ export default {
                 try {
                     needFetch = JSON.stringify(model.main.filter) !== JSON.stringify(filter)
                 } catch (err) {
+                    // eslint-disable-next-line no-console
                     console.log('DGX GetInit: filter is invalid.')
                 }
             }
@@ -158,6 +159,9 @@ export default {
          * @returns {Promise}
          */
         Item(id, paths, filter={}, opt={}) {
+            if (typeof id === 'object') {
+                id = id[Model.config.primaryKey]
+            }
             return this.Dp(this.ModelFormat(paths, 'get'), {...opt, id, params: filter})
         },
 
@@ -174,9 +178,9 @@ export default {
             const {init, loading, more, empty} = model.main
             if (init && !loading && more && !empty) {
                 let params = copyJSON(typeof filter === 'object' ? filter : this.Filter) || {}
-                return this.Dp(model, {params})
+                return this.Dp(model, {...opt, params})
             } else {
-                // console.log(`无法加载更多 - init:${init} loading:${!loading} more:${more} empty:${!empty}`)
+                // eslint-disable-next-line no-console
                 console.log('LoadMore: 无法加载更多.')
                 return Promise.resolve(null)
             }
@@ -190,7 +194,7 @@ export default {
          * @param {object} data - 参数集，会传递到 Fetch 方法中
          * @returns {Promise}
          */
-        Action(name='POST', paths, data={}) {
+        Action(name = 'POST', paths, data = {}) {
             return this.Dp(this.ModelFormat(paths, name), data)
         },
 
@@ -213,7 +217,7 @@ export default {
          * @returns {Promise}
          */
         Post(data, paths, callback) {
-            if (data === undefined || data === null || data.preventDefault) data = copyJSON(this.Params || {})
+            if (data === undefined || data === null || typeof data.preventDefault === 'function') data = copyJSON(this.Params || {})
             let opt = {}
             if (!callback) {
                 callback = res => {
@@ -245,7 +249,7 @@ export default {
          * @returns {Promise}
          */
         Put(data, paths, callback) {
-            if (data === undefined || data === null || data.preventDefault) data = copyJSON(this.Params || {})
+            if (data === undefined || data === null || typeof data.preventDefault === 'function') data = copyJSON(this.Params || {})
             let opt = {}
             if (!callback) {
                 callback = res => {
@@ -262,7 +266,7 @@ export default {
             } else if (typeof callback === 'object') {
                 opt = callback
             }
-            return this.Dp(this.ModelFormat(paths, 'put'), {...opt, id: data.id, data}).then(res => {
+            return this.Dp(this.ModelFormat(paths, 'put'), {...opt, [Model.config.primaryKey]: data[Model.config.primaryKey], data}).then(res => {
                 if (typeof callback === 'function') callback(res)
                 return res
             })
@@ -279,7 +283,8 @@ export default {
          * @returns {Promise}
          */
         Del(data, paths, callback, {confirm = true} = {}) {
-            if (data === undefined || data === null || data.preventDefault) data = copyJSON(this.Params || {})
+            if (data === undefined || data === null || typeof data.preventDefault === 'function') data = copyJSON(this.Params || {})
+            if (~['string', 'number'].indexOf(typeof data)) data = {[Model.config.primaryKey]: data}
             let opt = {}
             if (!callback) {
                 callback = res => {
@@ -294,11 +299,11 @@ export default {
             } else if (typeof callback === 'object') {
                 opt = callback
             }
-            const next = () => this.Dp(this.ModelFormat(paths, 'delete'), {...opt, id: data.id, data}).then(res => {
+            const next = () => this.Dp(this.ModelFormat(paths, 'delete'), {...opt, [Model.config.primaryKey]: data[Model.config.primaryKey], data}).then(res => {
                 if (typeof callback === 'function') callback(res)
                 return res
             })
-            return confirm ? this.DelConfirm().then(res => next()) : next()
+            return confirm && typeof this.DelConfirm === 'function' ? this.DelConfirm().then(() => next()) : next()
         },
 
         /**
@@ -319,8 +324,8 @@ export default {
          * @returns {Promise}
          */
         Submit(data, paths, callback) {
-            if (data === undefined || data === null || data.preventDefault) data = copyJSON(this.Params || {})
-            return data.id ?
+            if (data === undefined || data === null || typeof data.preventDefault === 'function') data = copyJSON(this.Params || {})
+            return data[Model.config.primaryKey] ?
                 this.Put(data, paths, callback) :
                 this.Post(data, paths, callback)
         },

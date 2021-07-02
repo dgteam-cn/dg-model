@@ -1,7 +1,9 @@
-const FETCH = function({state, dispatch, commit}, config={}) {
+import Model from './main.js'
+
+const FETCH = function({state, dispatch, commit}, config = {}) {
 
     const model = config.model || 'common'
-    const {method, silent, only, middleware} = config
+    const {method, silent, only} = config
 
     // 检测是否重复，如果重复则取消之前相同的方法
     if (only) {
@@ -25,17 +27,18 @@ const FETCH = function({state, dispatch, commit}, config={}) {
 
     // 自动填充路由参数，例如 /user/:id 等，默认从 paths 中获取，若获取不到则尝试从 params 中获取
     const paths = []
-    for (let route of config.url.split('/')) {
-        if (route[0] === ':') {
-            let key = route.substr(1)
-            if (config.paths && config.paths[key] != undefined) {
+    for (const route of config.url.split('/')) {
+        if (route[0] === ':' && route.length > 1) {
+            const key = route.substr(1)
+            if (config.paths && config.paths[key] !== undefined) {
                 paths.push(config.paths[key])
                 delete config.paths[key]
-            } else if (config.params && config.params[key] != undefined) {
+            } else if (config.params && config.params[key] !== undefined) {
                 paths.push(config.params[key])
                 delete config.params[key]
             } else {
-                console.log('DGX FETCH - lose paths ' + key)
+                // eslint-disable-next-line no-console
+                console.log('[DGX FETCH] - lose paths ' + key)
             }
         } else {
             paths.push(route)
@@ -47,7 +50,7 @@ const FETCH = function({state, dispatch, commit}, config={}) {
 
         const callback = {
             // 成功回调
-            success: res => {
+            success: function(res) {
                 commit('MODEL_UPDATE', [model, 'init', true])
                 commit('MODEL_UPDATE', [model, 'error', false])
                 dispatch('FETCH_FINISH', [model, res.config.id])
@@ -58,7 +61,7 @@ const FETCH = function({state, dispatch, commit}, config={}) {
                 }
             },
             // 失败回调
-            error: res => {
+            error: function(res) {
                 if (res && res.config && res.config.id) {
                     dispatch('FETCH_FINISH', [model, res.config.id])
                 }
@@ -67,44 +70,55 @@ const FETCH = function({state, dispatch, commit}, config={}) {
             }
         }
 
-        const getCancel = (id, cancel) => {
+        const getCancel = function(id, cancel) {
             commit('MODEL_ADD', [model, 'ajax', {id, model, only, method, cancel, silent}])
             commit('FETCH_UPDATE', [model])
         }
 
-        if (this.fetch.socket && this.fetch.socket.status === 'online' && this.fetch.handle === 'auto' && config.use != 'ajax') {
+        // const {fetch} = this
+        const {fetch} = Model.config
+        if (fetch.socket && fetch.socket.status === 'online' && fetch.handle === 'auto' && config.use != 'ajax') {
             config.use = 'socket'
-            return this.fetch.socket.proxy({getCancel, ...config}).then(callback.success, callback.error)
+            return fetch.socket.proxy({getCancel, ...config}).then(callback.success, callback.error)
         } else {
             config.use = 'ajax'
-            return this.fetch.ajax({getCancel, ...config}).then(callback.success, callback.error)
+            return fetch.ajax({getCancel, ...config}).then(callback.success, callback.error)
         }
     })
 }
 
-// 语法糖
+/**
+ * Fetch GET 语法糖
+ * @param {string} opt[0] model - 模型名称
+ * @param {string} opt[1] id - 请求 id
+ */
 const GET = function({dispatch}, config) {
     if (typeof config === 'string') {
         config = {url: config}
     } else if (Array.isArray) {
-        const [url, parmas={}, options={}] = config
+        const [url, parmas = {}, options = {}] = config
         config = {url, parmas, ...options}
     }
     return dispatch('FETCH', {...config, method: 'GET'})
 }
-// Fetch 结束请求
-const FETCH_FINISH = function({state, dispatch, commit}, [model, id]=[]) {
-    for (let i=0; i<state[model].ajax.length; i++) {
-        if (state[model].ajax[i].id === id) {
-            commit('MODEL_REMOVE', {base: model, key: 'ajax', index: i})
-            return commit('FETCH_UPDATE', [model])
-        }
+
+/**
+ * Fetch 结束请求
+ * @param {string} opt[0] model - 模型名称
+ * @param {string} opt[1] id - 请求 id
+ */
+const FETCH_FINISH = function({state, commit}, [model, id]=[]) {
+    const index = state[model].ajax.findIndex(item => item.id === id)
+    if (index >= 0) {
+        commit('FETCH_REMOVE', [model, index])
+        commit('FETCH_UPDATE', [model])
     }
-}
-
-// 本地请求
-const MOCK = function() {
-
+    // state[model].ajax.forEach((item, index) => {
+    //     if (item.id === id) {
+    //         commit('FETCH_REMOVE', [model, index])
+    //         return commit('FETCH_UPDATE', [model])
+    //     }
+    // })
 }
 
 export {
