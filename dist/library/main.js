@@ -54,7 +54,8 @@ var Model = function constructor() {
     var key = _arr[_i];
 
     if (opt && _typeof(opt[key]) === 'object') {
-      this[key] = Object.assign(this[key], opt[key]);
+      // TODO typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
+      this[key] = Object.assign(this[key] || {}, opt[key]);
     }
   } // 遍历所有 state 查找 dgx 模块并创建方法
 

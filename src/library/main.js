@@ -22,7 +22,8 @@ const Model = function constructor(opt = {}) {
     // 混合配置
     for (const key of ['state', 'actions', 'mutations', 'getters']) {
         if (opt && typeof opt[key] === 'object') {
-            this[key] = Object.assign(this[key], opt[key])
+            // TODO typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
+            this[key] = Object.assign(this[key] || {}, opt[key])
         }
     }
 

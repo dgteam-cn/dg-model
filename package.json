@@ -1,6 +1,6 @@
 {
   "name": "@dgteam/model",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "",
   "author": "2681137811 <donguayx@qq.com>",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@dgteam/helper": "^0.3.1",
+    "@dgteam/helper": "^0.3.3",
     "axios": "^0.21.1",
     "mockjs": "^1.1.0",
     "qs": "^6.10.1",
