@@ -171,7 +171,8 @@ var GET = function GET(_ref2, config) {
     config = {
       url: config
     };
-  } else if (Array.isArray) {
+  } else if (Array.isArray(config)) {
+    // FIXME 2021-07-09 原本没有判断到 config 参数
     var _config = config,
         _config2 = _slicedToArray(_config, 3),
         url = _config2[0],

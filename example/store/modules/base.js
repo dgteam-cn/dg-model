@@ -13,6 +13,9 @@ export default new Model({
             }
         }
     },
+    actions: {
+        
+    },
     mutations: {
         UPDATE_BLOCK(state, data = []) {
             if (data[0]) {

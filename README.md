@@ -49,3 +49,12 @@
 ⬜  增加 relation 模型关联
 ⬜  后端文档导出（高风险）、拓展表单验证的方法
 ⬜  增加四个钩子（中间件函数）
+
+⬜  GET POST PUT DELETE 四项的 interact 建议独立出来，可以手动覆盖或者其他动作中去调用
+⬜  支持 marker 查询，可以手动指定 marker 字段值（兼容GetMore方法、兼容 Get 方法）
+    - page size count marker 需要重新校对
+
+### 0.3.2
+
+紧急修复自定义 actions 不生效的问题
+移除自带的 helper 模块

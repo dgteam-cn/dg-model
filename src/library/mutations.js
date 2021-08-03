@@ -105,7 +105,8 @@ const MODEL_REMOVE = function(state, [model, id]) {
     //     delete state[base][key]
     // }
     const {primaryKey} = Model.config
-    const index = state[model].list.findIndex(item => item[primaryKey] && item[primaryKey] === id)
+    // const index = state[model].list.findIndex(item => item[primaryKey] && item[primaryKey] === id)
+    const index = id ? state[model].list.findIndex(item => item[primaryKey] === id) : undefined
     if (index >= 0) {
         state[model].list.splice(index, 1)
     }

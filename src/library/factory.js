@@ -1,6 +1,6 @@
-import helper from './helper'
+import helper from '@dgteam/helper'
 import Model from './main.js'
-// import {debounce, throttle} from '@dgteam/helper/dist/lodash.js'
+// import {debounce, throttle} from '/dist/lodash.js'
 
 
 const ACTIVE = function(model) {

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import helper from './helper'
+import helper from '@dgteam/helper'
 import * as Mutations from "./mutations"
 import * as Actions from "./actions"
 import {ACTIVE, RESTFUL} from "./factory"
@@ -21,10 +21,8 @@ const Model = function constructor(opt = {}) {
 
     // 混合配置
     for (const key of ['state', 'actions', 'mutations', 'getters']) {
-        if (opt && typeof opt[key] === 'object') {
-            // TODO typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
-            this[key] = Object.assign(this[key] || {}, opt[key])
-        }
+        // typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
+        this[key] = helper.extend({}, this[key], opt[key])
     }
 
     // 遍历所有 state 查找 dgx 模块并创建方法
@@ -59,11 +57,13 @@ const Model = function constructor(opt = {}) {
                 active: null,
                 item: null
             }, this.state[model]))
-            Vue.set(this.state[model], 'reset', Object.assign({}, this.state[model]))
+            Vue.set(this.state[model], 'reset', helper.extend({}, this.state[model])) // 备份表单配置
 
-            this.actions = {FETCH: FETCH.bind(this), GET: GET.bind(this), FETCH_FINISH: FETCH_FINISH.bind(this)}
             // 合并工厂方法
-            this.actions = Object.assign(this.actions, ACTIVE(model, this), RESTFUL(model, this))
+            // 2021-08-02 此处没有继承原对象，导致自定义方法被重置的 bug
+            this.actions = helper.extend({}, this.actions, {
+                FETCH: FETCH.bind(this), GET: GET.bind(this), FETCH_FINISH: FETCH_FINISH.bind(this)
+            }, ACTIVE(model, this), RESTFUL(model, this))
         }
     }
 }

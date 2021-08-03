@@ -7,7 +7,7 @@ exports["default"] = void 0;
 
 var _vue = _interopRequireDefault(require("vue"));
 
-var _helper = _interopRequireDefault(require("./helper"));
+var _helper = _interopRequireDefault(require("@dgteam/helper"));
 
 var Mutations = _interopRequireWildcard(require("./mutations"));
 
@@ -52,11 +52,8 @@ var Model = function constructor() {
 
   for (var _i = 0, _arr = ['state', 'actions', 'mutations', 'getters']; _i < _arr.length; _i++) {
     var key = _arr[_i];
-
-    if (opt && _typeof(opt[key]) === 'object') {
-      // TODO typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
-      this[key] = Object.assign(this[key] || {}, opt[key]);
-    }
+    // typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
+    this[key] = _helper["default"].extend({}, this[key], opt[key]);
   } // 遍历所有 state 查找 dgx 模块并创建方法
 
 
@@ -89,15 +86,16 @@ var Model = function constructor() {
         item: null
       }, this.state[model]));
 
-      _vue["default"].set(this.state[model], 'reset', Object.assign({}, this.state[model]));
+      _vue["default"].set(this.state[model], 'reset', _helper["default"].extend({}, this.state[model])); // 备份表单配置
+      // 合并工厂方法
+      // 2021-08-02 此处没有继承原对象，导致自定义方法被重置的 bug
 
-      this.actions = {
+
+      this.actions = _helper["default"].extend({}, this.actions, {
         FETCH: FETCH.bind(this),
         GET: GET.bind(this),
         FETCH_FINISH: FETCH_FINISH.bind(this)
-      }; // 合并工厂方法
-
-      this.actions = Object.assign(this.actions, (0, _factory.ACTIVE)(model, this), (0, _factory.RESTFUL)(model, this));
+      }, (0, _factory.ACTIVE)(model, this), (0, _factory.RESTFUL)(model, this));
     }
   }
 };

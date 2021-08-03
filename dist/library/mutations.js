@@ -223,10 +223,11 @@ var MODEL_REMOVE = function MODEL_REMOVE(state, _ref11) {
   // } else {
   //     delete state[base][key]
   // }
-  var primaryKey = _main["default"].config.primaryKey;
-  var index = state[model].list.findIndex(function (item) {
-    return item[primaryKey] && item[primaryKey] === id;
-  });
+  var primaryKey = _main["default"].config.primaryKey; // const index = state[model].list.findIndex(item => item[primaryKey] && item[primaryKey] === id)
+
+  var index = id ? state[model].list.findIndex(function (item) {
+    return item[primaryKey] === id;
+  }) : undefined;
 
   if (index >= 0) {
     state[model].list.splice(index, 1);

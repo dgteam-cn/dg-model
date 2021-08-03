@@ -95,7 +95,7 @@ const FETCH = function({state, dispatch, commit}, config = {}) {
 const GET = function({dispatch}, config) {
     if (typeof config === 'string') {
         config = {url: config}
-    } else if (Array.isArray) {
+    } else if (Array.isArray(config)) { // FIXME 2021-07-09 原本没有判断到 config 参数
         const [url, parmas = {}, options = {}] = config
         config = {url, parmas, ...options}
     }

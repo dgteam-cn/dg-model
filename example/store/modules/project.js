@@ -12,6 +12,17 @@ const DGX = new Model({
             }
         }
     },
-    mutations: {}
+    actions: {
+        CHECK_USER() {
+            return new Promise(resolve => {
+                resolve({err: 0, msg: 'suc', result: {check: true}}) 
+            })
+        }  
+    },
+    mutations: {
+        CHANGE_USER() {
+            
+        }
+    }
 })
 export default DGX

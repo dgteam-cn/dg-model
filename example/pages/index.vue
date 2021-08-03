@@ -95,6 +95,7 @@ export default {
     },
     mounted() {
         window.page = this
+        window.helper = Helper
     }
 }
 </script>

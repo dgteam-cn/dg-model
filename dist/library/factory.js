@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RESTFUL = exports.ACTIVE = void 0;
 
-var _helper = _interopRequireDefault(require("./helper"));
+var _helper = _interopRequireDefault(require("@dgteam/helper"));
 
 var _main = _interopRequireDefault(require("./main.js"));
 
@@ -21,7 +21,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-// import {debounce, throttle} from '@dgteam/helper/dist/lodash.js'
+// import {debounce, throttle} from '/dist/lodash.js'
 var ACTIVE = function ACTIVE(model) {
   var _apis;
 

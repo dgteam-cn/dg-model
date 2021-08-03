@@ -65,6 +65,7 @@ export default {
             this.Cm('project/MODEL_RESET', ['user'])
             this.testReport('reset', this.Main.init === false && this.Main.list.length === 0)
 
+            
             console.log('运行完成', this.testData.table)
         }
     }
