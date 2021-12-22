@@ -193,9 +193,9 @@ const RESTFUL = function(model, {state}) {
                                 commit('MODEL_UPDATE', [model, 'list', res.result])
                             }
                         }
-                        commit('MODEL_UPDATE', [model, 'page', res.page])
+                        commit('MODEL_UPDATE', [model, 'page', res.page || config.params && config.params.page || 1])
                         commit('MODEL_UPDATE', [model, 'marker', res.marker !== undefined ? res.marker : undefined])
-                        commit('MODEL_UPDATE', [model, 'count', res.count != undefined && res.count >= 0 ? res.count : undefined])
+                        commit('MODEL_UPDATE', [model, 'count', res.count != undefined && res.count >= 0 ? Number(res.count) : undefined])
                         commit('MODEL_UPDATE', [model, 'total', res.total])
                         commit('MODEL_UPDATE', [model, 'empty', !!(res.page == 1 && !res.result.length)])
                         commit('MODEL_UPDATE', [model, 'more', res.page < res.total])

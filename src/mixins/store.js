@@ -64,16 +64,15 @@ export default {
     methods: {
 
         /**
-         * 加载数据
-         * @overview 按页码加载数据
-         * @param {number} [page] - 列表页码，默认加载第一页
-         * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
-         * @param {object} [filter] - 过滤器（筛选参数），不传则默认从 this.Filter 中获取
-         * @param {object} [opt] - 参数集，会传递到 Fetch 方法中
-         * @param {boolean} [opt.clean] - 触发请求前清空源列表
+         * @param {Number} page - 列表页码，默认加载第一页
+         * @param {String} paths - 模型路径，不传则默认从 this.store 中获取
+         * @param {Object} filter - 过滤器（筛选参数），不传则默认从 this.Filter 中获取
+         * @param {Object} opt - 参数集，会传递到 FETCH 方法中，可见相关参数说明
+         * @param {Boolean} opt.clean - 请求前是否先清空模型 list 数据
+         * @param {any} opt[key] - 其他参数会保留并传递给其他中间件
          * @returns {Promise}
          */
-        Get(page, paths, filter, opt={}) {
+        Get(page, paths, filter, opt = {}) {
             if (typeof page === 'string') {
                 filter = paths
                 paths = page
