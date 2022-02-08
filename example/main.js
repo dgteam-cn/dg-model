@@ -1,13 +1,18 @@
 import Vue from 'vue'
 import App from './App.vue'
 
-import Store from './store/index'
-Vue.prototype.$store = Store
+import dgx from '../dist/index.js'
+import store from './store'
+import axios from './plugins/axios'
+// console.log('./main.js', dgx)
+Vue.use(dgx, {
+    httpAdapter: axios
+})
 
 import router from './router'
 Vue.config.productionTip = false
 
-new Vue({
+const app = new Vue({
     render: h => h(App),
     router
 }).$mount('#app')

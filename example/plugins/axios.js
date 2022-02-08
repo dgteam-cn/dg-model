@@ -1,6 +1,5 @@
 
 import axios from 'axios'
-import Helper from '@dgteam/helper'
 
 let CancelToken = axios.CancelToken
 
@@ -81,7 +80,7 @@ export default function(config={}) {
         validateStatus: status => {
             return status >= 200 && status < 600
         },
-        id: count,
+        requestId: count,
         cancelToken, cancel,
         ...config
     })

@@ -1,69 +1,92 @@
-import Vue from 'vue'
-import Model from './main.js'
+import {Model, Table} from './main.js'
+import helper from '../helper'
 
-// Fetch 数据移除
-const FETCH_REMOVE = function(state, [model, index] = []) {
-    state[model].ajax.splice(index, 1)
+// ==================== 请求器 ====================
+
+// Fetch 加入
+const FETCH_JOIN = function(state, [table, ajax] = []) {
+    // state._models.ajax.push(ajax) // 2021-12-29 暂时取消该功能
+    if (table && state[table] && state[table].ajax) {
+        state[table].ajax.push(ajax)
+    }
 }
 
-// Fetch 取消请求
-const FETCH_CANCEL = function(state, [model, only, id]) {
-    let opt = Object.assign({model: undefined, only: undefined, id: undefined}, {model, only, id})
-    let models = opt.model ? opt.model : state.models
-    if (typeof models != 'object') {
-        models = [models]
-    }
-    finish:
-    for (let m of models) {
-        for (let i=0; i<state[m].ajax.length; i++) {
-            // 当存在 only 条件时且不满足 only 条件时候进行 break 操作
-            if (opt.only !== undefined && opt.only != state[m].ajax[i].only) {
-                break
-            }
-            // 当存在 id 条件时且不满足 id 条件时候进行 break 操作
-            if (opt.id !== undefined && opt.id != state[m].ajax[i].id) {
-                break
-            }
-            // 剩余为满足取消条件
-            try {
-                state[m].ajax[i].cancel()
-            } catch (err) {
-                console.error('DGX FETCH_CANCEL, 需要给请求配置取消函数')
-            }
-            state[m].ajax.splice(i, 1)
-            break finish
-        }
+// Fetch 数据移除
+const FETCH_REMOVE = function(state, [table, index] = []) {
+    if (table && state[table] && state[table].ajax) {
+        state[table].ajax.splice(index, 1) // index 索引是由 FETCH_FINISH 去计算的
     }
 }
 
 // Fetch 数据更新
-const FETCH_UPDATE = function(state, [model] = []) {
-    let loading = 0
-    let editing = 0
-    for (const fetch of state[model].ajax) {
-        if (fetch.method) {
-            let method = fetch.method.toUpperCase()
-            if (method === 'GET') {
-                loading += 1
-            } else if (~['POST', 'PUT', 'DELETE'].indexOf(method)) {
-                editing += 1
+const FETCH_UPDATE = function(state, [table, fetch] = []) {
+    if (table && state[table] && state[table].ajax && fetch && fetch.id) {
+        const instance = state[table].ajax.find(item => item.id === fetch.id)
+        if (instance) {
+            for (const key in fetch) {
+                Model.dataSet(instance, key, fetch[key])
             }
         }
     }
-    Vue.set(state[model], 'loading', loading)
-    Vue.set(state[model], 'editing', editing)
 }
 
+// Fetch 数据统计核查更新
+const FETCH_CHECK = function(state, table) {
+    if (table && state[table] && state[table].ajax) {
+        let loading = 0, editing = 0;
+        for (const fetch of state[table].ajax) {
+            if (fetch.method) {
+                let method = fetch.method.toUpperCase()
+                if (method === 'GET') {
+                    loading += 1
+                } else if (~['POST', 'PUT', 'DELETE'].indexOf(method)) {
+                    editing += 1
+                }
+            }
+        }
+        Model.dataSet(state[table], 'loading', loading)
+        Model.dataSet(state[table], 'editing', editing)
+    }
+}
+
+// ==================== 表字段 ====================
+
+// 表字段更新
+const TABLE_UPDATE = function(state, [table, key = 'list', value] = []) {
+    if (table && typeof state[table] === 'object') {
+        if (typeof key === 'string') {
+            Model.dataSet(state[table], key, value)
+        } else if (typeof key === 'object' && key !== null) {
+            for (let k in key) {
+                Model.dataSet(state[table], k, key[k])
+            }
+        }
+    }
+}
+
+// 表属性重置
+const TABLE_RESET = function(state, table) {
+    const tables = Array.isArray(table) ? table : [table]
+    tables.forEach(name => {
+        if (name && state[name] && helper.instance(state[name], Table)) {
+            const reset = Object.assign({}, state[name].reset)
+            for (const key in reset) {
+                Model.dataSet(state[name], key, reset[key]) // 2021-12-23 v0.4 部分新增的自定义字段不会被重置，仅重置初始字段
+            }
+        }
+    })
+}
+
+// // ==================== 行字段 ====================
 
 /**
- * @name 模型添加数据（到数组）
- * @param {object} state
- * @param {string} agrs[model] = 模型名称
- * @param {string} agrs[key] = 模型键（必须对应数组）
- * @param {any} agrs[value] = 值
- * @param {number|string} agrs[position] = 添加位置
+ * 添加 row 数据到 table.list
+ * @param {Object} state - vuex state
+ * @param {String} agrs[table] - 表名称
+ * @param {Object} agrs[row] - 行数据
+ * @param {Number|String} agrs[position] = 添加位置
  */
-const MODEL_ADD = function(state, [model, key = 'ajax', value, position = -1] = []) {
+const TABLE_ROWS_JOIN = function(state, [table, row, position = -1] = []) {
     if (typeof position === 'string') {
         if (~['start', 'begin', 'head'].indexOf(position)) {
             position = 0
@@ -74,84 +97,66 @@ const MODEL_ADD = function(state, [model, key = 'ajax', value, position = -1] = 
         }
     }
     if (position === 0) {
-        state[model][key].unshift(value)
+        state[table].list.unshift(row)
     } else if (position === -1) {
-        state[model][key].push(value)
+        state[table].list.push(row)
     } else if (Number.isInteger(position)) {
-        state[model][key].splice(position, 0, value)
+        state[table].list.splice(position, 0, row)
     }
 }
-const MODEL_MORE = function(state, [model, key = 'list', value]) {
-    if (Array.isArray(value)) {
-        for (let item of value) {
-            state[model][key].push(item)
+
+
+/**
+ * 合并 row 数据到 table.list
+ * @param {Object} state - vuex state
+ * @param {String} agrs[table] - 表名称
+ * @param {Array<Row>} agrs[list] - 表名称
+ */
+const TABLE_ROWS_MERGE = function(state, [table, list]) {
+    if (helper.isArray(list)) {
+        for (const row of list) {
+            state[table].list.push(row)
         }
     }
 }
 
-// TODO base 之后需要改成 model
-const MODEL_REMOVE = function(state, [model, id]) {
-    // if (id) {
-    //     let list = state[base][key]
-    //     for (let i=0; i < list.length; i++) {
-    //         if (list[i].id == id) {
-    //             state[base][key].splice(i, 1)
-    //             break;
-    //         }
-    //     }
-    // } else if (index || index == 0) {
-    //     state[base][key].splice(index, 1)
-    // } else {
-    //     delete state[base][key]
-    // }
-    const {primaryKey} = Model.config
-    // const index = state[model].list.findIndex(item => item[primaryKey] && item[primaryKey] === id)
-    const index = id ? state[model].list.findIndex(item => item[primaryKey] === id) : undefined
-    if (index >= 0) {
-        state[model].list.splice(index, 1)
-    }
-}
-const MODEL_RESET = function(state, model) {
-    const models = Array.isArray(model) ? model : [model]
-    models.forEach(name => {
-        if (name && state[name] && state[name].reset) {
-            let reset = Object.assign({}, state[name].reset)
-            state[name] = Object.assign({}, reset)
-            state[name].reset = Object.assign({}, reset)
-        }
-    })
-}
-const MODEL_UPDATE = function(state, [model, key='list', value]=[]) {
-    if (typeof key === 'object') {
-        for (let k in key) {
-            Vue.set(state[model], k, key[k])
-        }
-    } else {
-        Vue.set(state[model], key, value)
-    }
-}
-const MODEL_ROW_EXTEND = function(state, [model, item] = []) {
+/**
+ * 行数据更新（覆盖）
+ */
+// TODO 应该不同数据模型可以设置不同 primaryKey
+const TABLE_ROW_EXTEND = function(state, [table, item] = []) {
     try {
-        const {primaryKey} = Model.config
+        const {primaryKey} = Model
         if (item[primaryKey]) {
-            for (let row of state[model].list) {
+            for (let row of state[table].list) {
                 if (row[primaryKey] && row[primaryKey] === item[primaryKey]) {
                     Object.assign(row, item)
                 }
             }
-            if (state[model].item) {
-                let row = state[model].item
+            if (state[table].item) {
+                let row = state[table].item
                 if (row[primaryKey] && row[primaryKey] === item[primaryKey]) {
                     Object.assign(row, item)
                 }
             }
         }
     } catch (error) {
-        console.error(`dgx error`, error)
+        helper.consoleWarn(`dgx error`, error)
     }
 }
 
+/**
+ * 行数据移除
+ */
+// TODO 应该不同数据模型可以设置不同 primaryKey
+const TABLE_ROW_REMOVE = function(state, [table, id]) {
+    const {primaryKey} = Model
+    const index = id ? state[table].list.findIndex(item => item[primaryKey] === id) : undefined
+    if (index >= 0) state[table].list.splice(index, 1)
+}
+
 export {
-    FETCH_REMOVE, FETCH_CANCEL, FETCH_UPDATE,
-    MODEL_ADD, MODEL_MORE, MODEL_UPDATE, MODEL_ROW_EXTEND, MODEL_REMOVE, MODEL_RESET
+    FETCH_JOIN, FETCH_UPDATE, FETCH_REMOVE, FETCH_CHECK,
+    TABLE_UPDATE, TABLE_RESET,
+    TABLE_ROWS_JOIN, TABLE_ROWS_MERGE, TABLE_ROW_EXTEND, TABLE_ROW_REMOVE
 }

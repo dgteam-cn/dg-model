@@ -1,25 +1,27 @@
 {
   "name": "@dgteam/model",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "",
   "author": "2681137811 <donguayx@qq.com>",
   "main": "dist/index.js",
+  "module": "src/index.js",
+  "exports": {
+    ".": {
+      "module": "./src/index.js",
+      "require": "./dist/index.js",
+      "import": "./src/index.js"
+    }
+  },
   "scripts": {
     "start": "npx babel src --out-dir dist --watch",
     "dev": "vue-cli-service serve",
     "push": "npx babel src --out-dir dist && npm publish --access public",
+    "docs": "vuepress dev docs",
+    "docs-build": "vuepress build docs",
     "reset": "rimraf ./node_modules"
   },
   "license": "MIT",
-  "dependencies": {
-    "@dgteam/helper": "^0.3.3",
-    "axios": "^0.21.1",
-    "mockjs": "^1.1.0",
-    "qs": "^6.10.1",
-    "vue": "^2.6.0",
-    "vue-router": "^3.0.0",
-    "vuex": "^3.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.11.5",
     "@babel/core": "^7.11.5",
@@ -31,13 +33,25 @@
     "@dgteam/eslint-config-team": "^0.1.1",
     "@vue/cli-service": "^4.5.0",
     "@vue/compiler-sfc": "^3.0.4",
+    "@vuepress/plugin-docsearch": "^2.0.0-alpha.1",
+    "@vuepress/plugin-register-components": "^1.9.5",
+    "@vuepress/plugin-search": "^1.9.5",
+    "@vuepress/plugin-shiki": "^2.0.0-beta.5",
+    "@vuepress/utils": "^2.0.0-alpha.1",
+    "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "cross-env": "^7.0.2",
     "eslint": "^7.14.0",
+    "mockjs": "^1.1.0",
+    "qs": "^6.10.1",
     "ts-loader": "^7.0.5",
     "tslint": "^6.1.2",
     "typescript": "^3.9.5",
-    "vue-template-compiler": "^2.6.12"
-  }
+    "vuepress": "^2.0.0-beta.32"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
 }

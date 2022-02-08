@@ -5,64 +5,29 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _index = _interopRequireDefault(require("../index.js"));
+var _main = require("../library/main");
+
+var _controller = _interopRequireDefault(require("../library/controller"));
+
+var _helper = _interopRequireDefault(require("../helper"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function copyJSON(json) {
-  return JSON.parse(JSON.stringify(json));
-}
-
+var ctrl = new _controller["default"]();
+console.log(ctrl);
 var _default = {
   data: function data() {
     return {
-      /**
-       * 组件过滤暂存器
-       * @overview 影响某些方法的默认获取参数
-       */
       Filter: {},
-
-      /**
-       * 组件表单暂存器
-       * @overview 影响某些方法的默认获取参数
-       */
+      // 组件过滤暂存器, 影响某些方法的默认获取参数
       Params: {},
-
-      /**
-       * 单行数据编辑器信息
-       * @overview 一般用于 PC 端管理后台，移动端无需使用
-       */
+      // 组件表单暂存器, 影响某些方法的默认获取参数
       Editer: {
         view: false,
         title: null,
         form: null
-      }
+      } // 单行数据编辑器信息，般用于 PC 端管理后台，移动端无需使用
+
     };
   },
   computed: {
@@ -70,420 +35,45 @@ var _default = {
      * 默认数据模型
      * @overview 根据当前组件 this.store 值自动映射相关模型实例
      */
-    Main: function Main(vm) {
-      return vm.StoreInfo ? vm.StoreInfo.main : {};
-    },
+    Main: function Main() {
+      var info = this.__getTableInfo();
 
-    /**
-     * 默认数据模型信息
-     * @overview 框架内方法，业务层无需使用
-     */
-    StoreInfo: function StoreInfo() {
-      var opt = this.store;
-
-      if (opt) {
-        if (typeof opt === 'string') {
-          opt = {
-            path: opt
-          };
-        }
-
-        if (_typeof(opt) === 'object') {
-          var _opt = opt,
-              path_origin = _opt.path,
-              url = _opt.url,
-              as = _opt.as,
-              auth = _opt.auth;
-
-          var _this$ModelFormat = this.ModelFormat(path_origin),
-              store = _this$ModelFormat.store,
-              model = _this$ModelFormat.model,
-              path = _this$ModelFormat.path,
-              main = _this$ModelFormat.main;
-
-          if (this.$store._modulesNamespaceMap["".concat(store, "/")]) {
-            if (as) {
-              if (!url) {
-                url = path_origin;
-              }
-            }
-
-            return {
-              main: main,
-              path: path,
-              paths: path.split('/'),
-              path_origin: path_origin,
-              store: store,
-              model: model,
-              auth: auth
-            };
-          } else {}
-        }
-      }
-
-      return null;
+      return this.__getTableInstance(info && info.path_origin); // path_origin
     }
   },
   methods: {
-    /**
-     * 加载数据
-     * @overview 按页码加载数据
-     * @param {number} [page] - 列表页码，默认加载第一页
-     * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
-     * @param {object} [filter] - 过滤器（筛选参数），不传则默认从 this.Filter 中获取
-     * @param {object} [opt] - 参数集，会传递到 Fetch 方法中
-     * @param {boolean} [opt.clean] - 触发请求前清空源列表
-     * @returns {Promise}
-     */
-    Get: function Get(page, paths, filter) {
-      var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-      if (typeof page === 'string') {
-        filter = paths;
-        paths = page;
-        page = 1;
-      }
-
-      var params = copyJSON(_typeof(filter) === 'object' ? filter : this.Filter) || {};
-      params.page = page ? page : 1;
-
-      if (_typeof(opt) === 'object' && opt.clean) {
-        var _this$ModelFormat2 = this.ModelFormat(paths, 'get'),
-            store = _this$ModelFormat2.store,
-            model = _this$ModelFormat2.model;
-
-        this.Cm("".concat(store, "/MODEL_RESET"), model);
-      }
-
-      return this.Dp(this.ModelFormat(paths, 'get'), _objectSpread(_objectSpread({}, opt), {}, {
-        params: params
-      }));
+    Get: ctrl.get,
+    GetInit: ctrl.getInit,
+    GetFilter: function GetFilter(path, filter, opt) {
+      return this.Get(1, path, filter, opt);
     },
-
-    /**
-     * 初始化数据
-     * @overview 初始化列表，此方法初始化过一次后便不会重复拉取请求，一般用于拉取固定数据
-     * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
-     * @param {object} [filter] - 筛选参数，默认没有 page 参数，若有 page 的需求可以在此对象中传递
-     * @param {object} [opt] - 参数集，会传递到 Fetch 方法中
-     * @param {number} [opt.cache] - 缓存时间，秒为单位，超时后会强制重新来去
-     * @param {boolean} [opt.strict] - 严格的，将会比对 filter 条件，如果不同将会触发重新来去
-     * @param {boolean} [opt.immediate] - 立即执行，强制重新拉取
-     * @param {boolean} [opt.clean] - 触发请求前清空源列表（若判断读取缓存，该参数无效）
-     * @returns {Promise}
-     */
-    GetInit: function GetInit(paths) {
-      var _this = this;
-
-      var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var cache = opt.cache,
-          strict = opt.strict,
-          immediate = opt.immediate,
-          clean = opt.clean;
-      var model = this.ModelFormat(paths, 'get');
-      var needFetch = !model.main.init || Boolean(immediate);
-      if (_typeof(filter) !== 'object') filter = {};
-
-      var fetchHandle = function fetchHandle() {
-        if (clean) _this.Cm("".concat(model.store, "/MODEL_RESET"), model.model); // 清理模型
-
-        return _this.Dp(model, _objectSpread(_objectSpread({}, opt), {}, {
-          params: filter
-        })).then(function (res) {
-          if (!res.err) {
-            var update = _this.Time(new Date(), 'yyyy/MM/dd hh:mm:ss'); // TODO Time 方法替换
-
-
-            _this.Cm("".concat(model.store, "/MODEL_UPDATE"), [model.model, 'update', update]); // 把本次请求的时间戳记录起来，便以判断是否缓存超时
-
-
-            return _objectSpread(_objectSpread({}, res), {}, {
-              filter: filter,
-              fetch: true
-            });
-          }
-
-          return _objectSpread(_objectSpread({}, res), {}, {
-            result: [],
-            filter: filter,
-            fetch: true
-          });
-        });
-      };
-
-      if (model.main.list.length === 0) {
-        needFetch = true; // 如果列表为空表示则缓存无效
-      } else if (typeof cache === 'number' && model.main.update && !needFetch) {
-        // 判断是否缓存超时需要重新拉取
-        var update = new Date(model.main.update).getTime();
-        var expire = update + cache * 1000;
-        needFetch = Date.now() > expire; // 如果 当前时间 > 到期时间 需要重新加载
-      } else if (strict) {
-        // 如果是严格的，需要坚持筛选条件
-        try {
-          needFetch = JSON.stringify(model.main.filter) !== JSON.stringify(filter);
-        } catch (err) {
-          // eslint-disable-next-line no-console
-          console.log('DGX GetInit: filter is invalid.');
-        }
-      }
-
-      return needFetch ? fetchHandle() : Promise.resolve({
-        err: 0,
-        msg: '',
-        result: model.main.list,
-        filter: model.main.filter,
-        fetch: false
-      });
+    GetItem: ctrl.getItem,
+    GetMore: ctrl.getMore,
+    Action: ctrl.action,
+    Active: ctrl.activeRow,
+    ActiveRow: ctrl.activeRow,
+    // 语法糖
+    UpdateRow: ctrl.updateRow,
+    Post: ctrl.post,
+    Put: ctrl.put,
+    Submit: function Submit(data, path, opt) {
+      if (data === undefined || data === null || typeof data.preventDefault === 'function') data = _helper["default"].originJSON(this.Params || {});
+      return data[_main.Model.primaryKey] ? this.Put(data, path, opt) : this.Post(data, path, opt);
     },
-
-    /**
-     * 重新加载列表数据
-     */
-    GetFilter: function GetFilter(paths, filter) {
-      var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-          _ref$clean = _ref.clean,
-          clean = _ref$clean === void 0 ? true : _ref$clean,
-          _ref$loading = _ref.loading,
-          loading = _ref$loading === void 0 ? false : _ref$loading;
-
-      return this.Get(1, paths, filter, {
-        clean: clean,
-        loading: loading
-      });
+    Del: ctrl["delete"],
+    // 语法糖
+    Delete: ctrl["delete"],
+    ResetTable: ctrl.resetTable,
+    __dispatch: ctrl.__dispatch,
+    __commit: ctrl.__commit,
+    __modelFormat: ctrl.__modelFormat,
+    __getTableInstance: ctrl.__getTableInstance,
+    __getTableInfo: ctrl.__getTableInfo,
+    Dp: function Dp(path, data) {
+      return ctrl.__dispatch(path, data);
     },
-
-    /**
-     * 加载更多数据
-     */
-    GetMore: function GetMore(paths, filter, opt) {
-      return this.LoadMore(paths, filter, opt);
-    },
-
-    /**
-     * 加载单行数据
-     * @overview 通过主键拉取单行数据，如果拉取成功会联动触发 this.Active(item) 方法
-     * @param {number} id - 数据主键值
-     * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-     * @param {object} params - 筛选参数，默认没有 page 参数，若有 page 的需求可以在此对象中传递
-     * @param {object} opt - 参数集，会传递到 Fetch 方法中
-     * @returns {Promise}
-     */
-    Item: function Item(id, paths) {
-      var filter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-      if (_typeof(id) === 'object') {
-        id = id[_index["default"].config.primaryKey];
-      }
-
-      return this.Dp(this.ModelFormat(paths, 'get'), _objectSpread(_objectSpread({}, opt), {}, {
-        id: id,
-        params: filter
-      }));
-    },
-
-    /**
-     * 加载更多数据
-     * @overview 一般用在移动端的 "触底加载" 的效果，拉取的数据会连接上一页的列表
-     * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-     * @param {object} filter - 过滤器（筛选参数），不传则默认从 this.Filter 中获取
-     * @param {object} opt - 参数集，会传递到 Fetch 方法中
-     * @returns {Promise}
-     */
-    LoadMore: function LoadMore(paths, filter, opt) {
-      var model = this.ModelFormat(paths, 'more');
-      var _model$main = model.main,
-          init = _model$main.init,
-          loading = _model$main.loading,
-          more = _model$main.more,
-          empty = _model$main.empty;
-
-      if (init && !loading && more && !empty) {
-        var params = copyJSON(_typeof(filter) === 'object' ? filter : this.Filter) || {};
-        return this.Dp(model, _objectSpread(_objectSpread({}, opt), {}, {
-          params: params
-        }));
-      } else {
-        // eslint-disable-next-line no-console
-        console.log('LoadMore: 无法加载更多.');
-        return Promise.resolve(null);
-      }
-    },
-
-    /**
-     * 模型动作
-     * @param {string} name - 动作名称，会自动转换为大写字母
-     * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-     * @param {object} data - 参数集，会传递到 Fetch 方法中
-     * @returns {Promise}
-     */
-    Action: function Action() {
-      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'POST';
-      var paths = arguments.length > 1 ? arguments[1] : undefined;
-      var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.Dp(this.ModelFormat(paths, name), data);
-    },
-
-    /**
-     * 设为焦点
-     * @param {object} item - 被设为焦点的实例
-     * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-     * @returns {Promise}
-     */
-    Active: function Active(item, paths) {
-      return this.Dp(this.ModelFormat(paths, 'active'), item);
-    },
-
-    /**
-     * 提交数据行
-     * @param {object} data - 提交数据，不传则默认从 this.Params 中获取
-     * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-     * @param {function} callback - 回调函数
-     * @returns {Promise}
-     */
-    Post: function Post(data, paths, callback) {
-      var _this2 = this;
-
-      if (data === undefined || data === null || typeof data.preventDefault === 'function') data = copyJSON(this.Params || {});
-      var opt = {};
-
-      if (!callback) {
-        callback = function callback(res) {
-          if (res && !res.err) {
-            if (typeof _this2.Suc === 'function') {
-              _this2.Suc('操作成功');
-            }
-
-            if (typeof _this2.view !== "undefined") {
-              _this2.view = false;
-
-              _this2.$emit('finish', res ? res : 1);
-            }
-          }
-        };
-      } else if (_typeof(callback) === 'object') {
-        opt = callback;
-      }
-
-      return this.Dp(this.ModelFormat(paths, 'post'), _objectSpread(_objectSpread({}, opt), {}, {
-        data: data
-      })).then(function (res) {
-        if (typeof callback === 'function') callback(res);
-        return res;
-      });
-    },
-
-    /**
-     * 修改数据行
-     * @param {object} data - 提交数据，不传则默认从 this.Params 中获取
-     * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-     * @param {function} callback - 回调函数
-     * @returns {Promise}
-     */
-    Put: function Put(data, paths, callback) {
-      var _this3 = this,
-          _objectSpread2;
-
-      if (data === undefined || data === null || typeof data.preventDefault === 'function') data = copyJSON(this.Params || {});
-      var opt = {};
-
-      if (!callback) {
-        callback = function callback(res) {
-          if (res && !res.err) {
-            if (typeof _this3.Suc === 'function') {
-              _this3.Suc('操作成功');
-            }
-
-            if (typeof _this3.view !== "undefined") {
-              _this3.view = false;
-
-              _this3.$emit('finish', res ? res : 1);
-            }
-          }
-        };
-      } else if (_typeof(callback) === 'object') {
-        opt = callback;
-      }
-
-      return this.Dp(this.ModelFormat(paths, 'put'), _objectSpread(_objectSpread({}, opt), {}, (_objectSpread2 = {}, _defineProperty(_objectSpread2, _index["default"].config.primaryKey, data[_index["default"].config.primaryKey]), _defineProperty(_objectSpread2, "data", data), _objectSpread2))).then(function (res) {
-        if (typeof callback === 'function') callback(res);
-        return res;
-      });
-    },
-
-    /**
-     * 删除数据行
-     * @param {object} data - 提交数据，不传则默认从 this.Params 中获取
-     * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-     * @param {function} callback - 回调函数
-     * @param {object} opt - 参数集
-     * @param {boolean} opt.confirm - 执行前是否先弹窗确认（默认 true）
-     * @returns {Promise}
-     */
-    Del: function Del(data, paths, callback) {
-      var _this4 = this;
-
-      var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-          _ref2$confirm = _ref2.confirm,
-          confirm = _ref2$confirm === void 0 ? true : _ref2$confirm;
-
-      if (data === undefined || data === null || typeof data.preventDefault === 'function') data = copyJSON(this.Params || {});
-      if (~['string', 'number'].indexOf(_typeof(data))) data = _defineProperty({}, _index["default"].config.primaryKey, data);
-      var opt = {};
-
-      if (!callback) {
-        callback = function callback(res) {
-          if (res && !res.err) {
-            if (typeof _this4.Suc === 'function') {
-              _this4.Suc('删除成功');
-            } else if (typeof _this4.Toast === 'function') {
-              _this4.Toast('删除成功');
-            }
-          }
-        };
-      } else if (_typeof(callback) === 'object') {
-        opt = callback;
-      }
-
-      var next = function next() {
-        var _objectSpread3;
-
-        return _this4.Dp(_this4.ModelFormat(paths, 'delete'), _objectSpread(_objectSpread({}, opt), {}, (_objectSpread3 = {}, _defineProperty(_objectSpread3, _index["default"].config.primaryKey, data[_index["default"].config.primaryKey]), _defineProperty(_objectSpread3, "data", data), _objectSpread3))).then(function (res) {
-          if (typeof callback === 'function') callback(res);
-          return res;
-        });
-      };
-
-      return confirm && typeof this.DelConfirm === 'function' ? this.DelConfirm().then(function () {
-        return next();
-      }) : next();
-    },
-
-    /**
-     * 模型清理（重置）
-     * @param {function} paths - 模型路径，不传则默认从 this.store 中获取
-     */
-    Reset: function Reset(paths) {
-      var _this$ModelFormat3 = this.ModelFormat(paths, 'get'),
-          store = _this$ModelFormat3.store,
-          model = _this$ModelFormat3.model;
-
-      return this.Cm("".concat(store, "/MODEL_RESET"), model);
-    },
-
-    /**
-     * 提交表单
-     * @overview 自动从 this.Params 拉取数据，根据是否有主键判断是新增还是修改
-     * @param {object} data - 提交数据，不传则默认从 this.Params 中获取
-     * @param {string} paths - 模型路径，不传则默认从 this.store 中获取
-     * @param {function} callback - 回调函数
-     * @returns {Promise}
-     */
-    Submit: function Submit(data, paths, callback) {
-      if (data === undefined || data === null || typeof data.preventDefault === 'function') data = copyJSON(this.Params || {});
-      return data[_index["default"].config.primaryKey] ? this.Put(data, paths, callback) : this.Post(data, paths, callback);
+    Cm: function Cm(path, data) {
+      return ctrl.__commit(path, data);
     },
 
     /**
@@ -501,189 +91,8 @@ var _default = {
       if (this[model]) {
         this[model].view = true;
         this[model].title = title ? title : item ? '修改数据' : '新增数据';
-        this[model].form = item ? copyJSON(item) : null;
+        this[model].form = item ? _helper["default"].originJSON(item) : null;
       }
-    },
-    // Next(router, item, paths){
-    //     if(!item){
-    //         this.Edit()
-    //     }else if(item.id && model){
-    //         let [ base, store ] = model.split('/')
-    //         this.Dp(`${base}/ACTIVE_${store.toUpperCase()}`,item)
-    //         this.$nextTick(()=>{
-    //             this.Go(router,{ id: item.id })
-    //         })
-    //     }
-    // },
-
-    /**
-     * 筛选查询
-     * @overview 类似 Get 方法，一般用于用户切换了筛选条件后重新查询
-     * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
-     * @param {object} [filter] - 筛选条件，不传则默认从 this.Filter 中获取
-     * @param {object} [opt] - 其他参数
-     * @returns {Promise}
-     */
-    MakeFilter: function MakeFilter(paths, filter) {
-      var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-          _ref3$clean = _ref3.clean,
-          clean = _ref3$clean === void 0 ? true : _ref3$clean,
-          _ref3$loading = _ref3.loading,
-          loading = _ref3$loading === void 0 ? false : _ref3$loading;
-
-      // TODO 即将废弃
-      var _this$ModelFormat4 = this.ModelFormat(paths, 'get'),
-          store = _this$ModelFormat4.store,
-          model = _this$ModelFormat4.model;
-
-      if (clean) {
-        this.Cm("".concat(store, "/MODEL_RESET"), model);
-      }
-
-      return this.Get(1, paths, filter, {
-        loading: loading
-      });
-    },
-
-    /**
-     * 执行 vuex 动作
-     * @overview this.$store.dispatch 的语法糖，会自动格式化 paths
-     * @param {string} [paths] - 模型路径，不传则默认从 this.store 中获取
-     * @param {object} [data] - 提交数据
-     * @returns {Promise}
-     */
-    Dp: function Dp(paths, data) {
-      return this.$store.dispatch(paths && paths.path ? paths.path : this.ModelFormat(paths).path, data);
-    },
-
-    /**
-     * 执行 vuex 图片
-     * @overview this.$store.commit 的语法糖，会自动格式化 paths
-     * @param {string} [path] - 模型路径，不传则默认从 this.store 中获取
-     * @param {object} [data] - 提交数据
-     * @returns {Promise}
-     */
-    Cm: function Cm(paths, data) {
-      return this.$store.commit(paths && paths.path ? paths.path : this.ModelFormat(paths).path, data);
-    },
-
-    /**
-     * 递归查询模型数据
-     * @overview 框架内方法，业务层无需使用
-     * @param {string} [path] - 模型路径
-     * @param {object} [tunnel] - 隧道
-     */
-    StoreDeepInspect: function StoreDeepInspect(paths) {
-      var tunnel = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.$store.state;
-      var name = null;
-
-      if (paths.length) {
-        name = paths.shift();
-      } else {
-        return tunnel;
-      }
-
-      if (name) {
-        if (tunnel[name]) {
-          return this.StoreDeepInspect(paths, tunnel[name]);
-        } // else if (paths.length + 1 === this.StorePath.length && this.$nuxt && this.$nuxt.layoutName){
-        //     // 兼容 nuxt 深层模块
-        //     paths.unshift(name)
-        //     return this.StoreDeepInspect(paths, tunnel[this.$nuxt.layoutName])
-        // }
-
-      }
-
-      return {};
-    },
-
-    /**
-     * 格式化模型
-     * @overview 框架内方法，业务层无需使用
-     * @param {string} [path] - 模型路径
-     * @param {string} [action] - 执行动作
-     */
-    ModelFormat: function ModelFormat(paths) {
-      var _this5 = this;
-
-      var action = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-      var StoreDeepInspect = function StoreDeepInspect(location) {
-        return _this5.StoreDeepInspect(location);
-      };
-
-      var ModelProxy = /*#__PURE__*/function () {
-        function ModelProxy(_ref4) {
-          var store = _ref4.store,
-              model = _ref4.model,
-              action = _ref4.action,
-              action_path = _ref4.action_path;
-
-          _classCallCheck(this, ModelProxy);
-
-          this.store = store;
-          this.model = model;
-          this.action = action;
-          this.action_path = action_path;
-          this.path = "".concat(store, "/").concat(this.action_path);
-          this.paths = store.split('/').concat(model);
-        }
-
-        _createClass(ModelProxy, [{
-          key: "main",
-          get: function get() {
-            return this.store && this.model ? StoreDeepInspect([].concat(_toConsumableArray(this.store.split('/')), [this.model])) : {};
-          }
-        }]);
-
-        return ModelProxy;
-      }();
-
-      if (!paths) {
-        try {
-          paths = this.StoreInfo.path_origin;
-        } catch (err) {
-          console.error(this.StoreInfo);
-          throw new Error('model error', err);
-        }
-      }
-
-      if (typeof paths === 'string') {
-        paths = paths.split('/');
-      }
-
-      var store, model, action_path; // store 为 vuex 的命名空间，若不传则尝试自动取值
-
-      if (paths.length === 1) {
-        store = this.StoreInfo.store;
-        model = paths[0];
-      } else {
-        // 路径最后一个为模型
-        model = paths.pop(); // 若代码为全大写则表示为动作名
-
-        if (!action && model.toUpperCase() === model) {
-          action_path = model;
-          model = null;
-        } else if (action) {
-          action_path = "".concat(action.toUpperCase(), "_").concat(model.toUpperCase());
-        }
-
-        store = paths.join('/'); // 去掉最后一个剩余的为模块路径
-      } // 如果 vuex 没有此模型，尝试兼容路径
-      // console.log('Store.mix.js - ModelFormat:','| paths:', paths, '| store:', store, '| hasStore:', this.$store.hasModule(paths[0]), '| model', model, '\n\n')
-      // if(paths[0] && !this.$store.hasModule(store.split('/'))){
-      //     if(this.$nuxt && this.$nuxt.layoutName){
-      //         store = this.$nuxt.layoutName + '/' + store
-      //     }
-      // }
-
-
-      return new ModelProxy({
-        store: store,
-        model: model,
-        action: action,
-        action_path: action_path
-      });
     }
   }
 };
