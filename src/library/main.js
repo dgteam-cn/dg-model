@@ -40,11 +40,15 @@ const Table = function(model, ...args) {
         active: null, // 焦点在数据的索引
         item: null // 焦点对象
     })
-    obj.reset = helper.originJSON(obj)
+    const enumerable = process.server, configurable = true, writable = true;
+    Object.defineProperties(this, {
+        __reset__: {value: helper.originJSON(obj), configurable, enumerable, writable}, // 备份原始数据
+        __table__: {value: true, configurable, enumerable, writable}
+    })
     for (const key in obj) {
         this[key] = obj[key]
     }
-    if (process.server) this.__table__ = true // 兼容 nuxt 2, nuxt 2 的模式会去除 constructor
+    // console.log('process.service', process.server)
     return this
 }
 
@@ -140,7 +144,7 @@ Model.prototype.mutations = {
     TABLE_ROWS_JOIN, TABLE_ROWS_MERGE, TABLE_ROW_EXTEND, TABLE_ROW_REMOVE
 }
 Model.prototype.getters = {}
-
+// Model.tables = {} // 数据表原始配置
 Model.Mutations = Mutations
 Model.Actions = Actions
 Model.Factory = {ACTIVE, RESTFUL}

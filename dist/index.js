@@ -59,8 +59,7 @@ exports.version = version;
 
 function install(app, options) {
   var vueVersion = Number(app.version.split('.')[0]); // 版本
-
-  console.log('dgx install vueVersion:', vueVersion); // 获取模型数据库实例
+  // 获取模型数据库实例
 
   function getModels(store) {
     // 必须使用 $store.state 而不是 $store._modules.root.state, 否则在 Vue3 中会失去响应式

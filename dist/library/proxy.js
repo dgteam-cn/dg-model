@@ -19,7 +19,14 @@ var TableProxy = function TableProxy(table, path) {
     this[key] = table[key];
   }
 
-  this.__path__ = path;
+  Object.defineProperties(this, {
+    __path__: {
+      value: path,
+      enumerable: !!process.server,
+      configurable: true,
+      writable: true
+    }
+  }); // enumerable 为了兼容 nuxt2 的 server 模式
 
   var defineProperty = function defineProperty(name, value) {
     return Object.defineProperty(_this, name, {
@@ -62,7 +69,10 @@ var TableProxy = function TableProxy(table, path) {
   defineProperty('submit', function (item, opt) {
     return Object.getPrototypeOf(_this).submit.call(_this, item, _this.__path__, opt);
   });
-  defineProperty('delete', function (item, opt) {
+  defineProperty('del', function (item, opt) {
+    return Object.getPrototypeOf(_this)["delete"].call(_this, item, _this.__path__, opt);
+  });
+  defineProperty('destroy', function (item, opt) {
     return Object.getPrototypeOf(_this)["delete"].call(_this, item, _this.__path__, opt);
   });
   defineProperty('resetTable', function () {

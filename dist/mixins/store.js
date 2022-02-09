@@ -14,7 +14,6 @@ var _helper = _interopRequireDefault(require("../helper"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var ctrl = new _controller["default"]();
-console.log(ctrl);
 var _default = {
   data: function data() {
     return {

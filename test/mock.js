@@ -5,9 +5,9 @@ import qs from 'qs'
 const answer = (err, msg, result = null, opt = {}) => ({err, msg, result, date: new Date(), ...opt})
 
 Mock.setup({
-	timeout: 350
+    timeout: 350
 })
-const DbUser = {
+const _DbUser = {
     primaryKey: 13,
     list: [
         {id: 1, name: '毕芳洲', age: 24},
@@ -24,6 +24,8 @@ const DbUser = {
         {id: 12, name: '伊艳卉', age: 33}
     ]
 }
+let DbUser = JSON.parse(JSON.stringify(_DbUser))
+
 Mock.mock(/^\/user\/?/i, /get/i, function(opt) {
     let id = opt.url.split('?')[0].split('user/')[1]
     if (id) {
@@ -33,7 +35,7 @@ Mock.mock(/^\/user\/?/i, /get/i, function(opt) {
         if (!result) return answer(404, 'not fount.')
         return answer(0, 'successful.', result)
     } else {
-        let {page = 1, size = 6} = qs.parse(opt.url.split('?')[1])
+        let {page = 1, size = 10} = qs.parse(opt.url.split('?')[1])
         if (page != Number(page)) return answer(403, '"page" must be Integer.')
         if (size != Number(size) || size > 100) return answer(403, '"size" must be Integer and length <= 100.')
         page = Number(page)
@@ -53,7 +55,7 @@ Mock.mock(/^\/user\/?/i, /post/i, function(opt) {
     const result = {id, name, age}
     DbUser.primaryKey ++
     DbUser.list.push(result)
-	return answer(0, 'successful.', result)
+    return answer(0, 'successful.', result)
 })
 Mock.mock(/^\/user\/\d{1,10}$/i, /put/i, function(opt) {
     let id = opt.url.split('user/')[1]
@@ -65,7 +67,7 @@ Mock.mock(/^\/user\/\d{1,10}$/i, /put/i, function(opt) {
     if (name != undefined && (!name || typeof name !== 'string' || name.length > 4)) return answer(403, '"name" must be String and length <= 4.')
     if (name != undefined && (!age || typeof age !== 'number' || age % 1 !== 0)) return answer(403, '"age" must be Integer.')
     Object.assign(result, {name: name !== undefined ? name : result.name, age: age !== undefined ? age : result.age})
-	return answer(0, 'successful.', result)
+    return answer(0, 'successful.', result)
 })
 Mock.mock(/^\/user\/\d{1,10}$/i, /delete/i, function(opt) {
     let id = opt.url.split('user/')[1]
@@ -74,5 +76,11 @@ Mock.mock(/^\/user\/\d{1,10}$/i, /delete/i, function(opt) {
     const index = DbUser.list.findIndex(item => item.id == id)
     if (index == -1) return answer(404, 'not fount.')
     DbUser.list.splice(index, 1)
-	return answer(0, 'successful.', {id})
+    return answer(0, 'successful.', {id})
 })
+
+export default {
+    reset() {
+        DbUser = JSON.parse(JSON.stringify(_DbUser))
+    }
+}

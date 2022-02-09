@@ -176,7 +176,7 @@ const RESTFUL = function(table, {state}) {
             // 数据联动
             const interactHandles = {
 
-                GET: ({commit}, res, config) => {
+                GET: (opt, res, config) => {
                     const interact = getRESTfulConfig('interact', 'GET')
                     if (config.primaryKey && !config.id) config.id = config.primaryKey
                     if (config.id) {
@@ -205,7 +205,7 @@ const RESTFUL = function(table, {state}) {
                     }
                 },
 
-                POST: ({state, commit, model}, res) => {
+                POST: ({state, table}, res) => {
                     const interact = getRESTfulConfig('interact', 'POST')
                     const {primaryKey} = Model
                     if (interact && res.result && res.result[primaryKey]) {
@@ -216,16 +216,16 @@ const RESTFUL = function(table, {state}) {
                             position = interact
                         }
                         tableCtrl.rows.add(res.result, position)
-                        if (state[model].count != undefined && state[model].count >= 0) {
-                            tableCtrl.update('count', state[model].count + 1)  // commit('TABLE_UPDATE', [model, 'count', state[model].count + 1])
+                        if (state[table].count != undefined && state[table].count >= 0) {
+                            tableCtrl.update('count', state[table].count + 1)  // commit('TABLE_UPDATE', [model, 'count', state[model].count + 1])
                         }
-                        if (state[model].empty) {
+                        if (state[table].empty) {
                             tableCtrl.update('empty', false) // 判断是否已经脱离 “空列表” 状态 commit('TABLE_UPDATE', [model, 'empty', false])
                         }
                     }
                 },
 
-                PUT: ({commit}, res) => {
+                PUT: (opt, res) => {
                     const interact = getRESTfulConfig('interact', 'PUT')
                     const {primaryKey} = Model
                     if (interact && res.result && res.result[primaryKey]) {

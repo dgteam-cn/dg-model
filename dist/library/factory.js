@@ -246,8 +246,7 @@ var RESTFUL = function RESTFUL(table, _ref4) {
       }; // 数据联动
 
       var interactHandles = {
-        GET: function GET(_ref6, res, config) {
-          var commit = _ref6.commit;
+        GET: function GET(opt, res, config) {
           var interact = getRESTfulConfig('interact', 'GET');
           if (config.primaryKey && !config.id) config.id = config.primaryKey;
 
@@ -286,10 +285,9 @@ var RESTFUL = function RESTFUL(table, _ref4) {
             tableCtrl.update('list', res.result || res);
           }
         },
-        POST: function POST(_ref7, res) {
-          var state = _ref7.state,
-              commit = _ref7.commit,
-              model = _ref7.model;
+        POST: function POST(_ref6, res) {
+          var state = _ref6.state,
+              table = _ref6.table;
           var interact = getRESTfulConfig('interact', 'POST');
           var primaryKey = _main.Model.primaryKey;
 
@@ -304,17 +302,16 @@ var RESTFUL = function RESTFUL(table, _ref4) {
 
             tableCtrl.rows.add(res.result, position);
 
-            if (state[model].count != undefined && state[model].count >= 0) {
-              tableCtrl.update('count', state[model].count + 1); // commit('TABLE_UPDATE', [model, 'count', state[model].count + 1])
+            if (state[table].count != undefined && state[table].count >= 0) {
+              tableCtrl.update('count', state[table].count + 1); // commit('TABLE_UPDATE', [model, 'count', state[model].count + 1])
             }
 
-            if (state[model].empty) {
+            if (state[table].empty) {
               tableCtrl.update('empty', false); // 判断是否已经脱离 “空列表” 状态 commit('TABLE_UPDATE', [model, 'empty', false])
             }
           }
         },
-        PUT: function PUT(_ref8, res) {
-          var commit = _ref8.commit;
+        PUT: function PUT(opt, res) {
           var interact = getRESTfulConfig('interact', 'PUT');
           var primaryKey = _main.Model.primaryKey;
 
@@ -322,9 +319,9 @@ var RESTFUL = function RESTFUL(table, _ref4) {
             tableCtrl.rows.update(res.result);
           }
         },
-        DELETE: function DELETE(_ref9, res, config) {
-          var state = _ref9.state,
-              table = _ref9.table;
+        DELETE: function DELETE(_ref7, res, config) {
+          var state = _ref7.state,
+              table = _ref7.table;
           var interact = getRESTfulConfig('interact', 'DELETE');
 
           if (interact) {

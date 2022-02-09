@@ -8,8 +8,7 @@ const TableProxy = function(table, path) {
         this[key] = table[key]
     }
 
-    this.__path__ = path
-
+    Object.defineProperties(this, {__path__: {value: path,  enumerable: !!process.server, configurable: true, writable: true}})  // enumerable 为了兼容 nuxt2 的 server 模式
     const defineProperty = (name, value) => Object.defineProperty(this, name, {value})
 
     defineProperty('get', (page, filter, opt) =>           Object.getPrototypeOf(this).get.call(this, page, path, Object.assign({}, this.filter, filter), opt)) // 试验性: 默认继承当前实例的 filter
@@ -23,7 +22,8 @@ const TableProxy = function(table, path) {
     defineProperty('post', (item, opt) =>                  Object.getPrototypeOf(this).post.call(this, item, this.__path__, opt))
     defineProperty('put', (item, opt) =>                   Object.getPrototypeOf(this).put.call(this, item, this.__path__, opt))
     defineProperty('submit', (item, opt) =>                Object.getPrototypeOf(this).submit.call(this, item, this.__path__, opt))
-    defineProperty('delete', (item, opt) =>                Object.getPrototypeOf(this).delete.call(this, item, this.__path__, opt))
+    defineProperty('del', (item, opt) =>                Object.getPrototypeOf(this).delete.call(this, item, this.__path__, opt))
+    defineProperty('destroy', (item, opt) =>                Object.getPrototypeOf(this).delete.call(this, item, this.__path__, opt))
     defineProperty('resetTable', () =>                     Object.getPrototypeOf(this).resetTable.call(this, this.__path__))
 
     return this

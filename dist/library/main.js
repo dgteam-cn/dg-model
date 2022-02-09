@@ -79,13 +79,29 @@ var Table = function Table(model) {
 
   }]));
 
-  obj.reset = _helper["default"].originJSON(obj);
+  var enumerable = process.server,
+      configurable = true,
+      writable = true;
+  Object.defineProperties(this, {
+    __reset__: {
+      value: _helper["default"].originJSON(obj),
+      configurable: configurable,
+      enumerable: enumerable,
+      writable: writable
+    },
+    // 备份原始数据
+    __table__: {
+      value: true,
+      configurable: configurable,
+      enumerable: enumerable,
+      writable: writable
+    }
+  });
 
   for (var key in obj) {
     this[key] = obj[key];
-  }
+  } // console.log('process.service', process.server)
 
-  if (process.server) this.__table__ = true; // 兼容 nuxt 2, nuxt 2 的模式会去除 constructor
 
   return this;
 };
@@ -205,7 +221,8 @@ Model.prototype.mutations = {
   TABLE_ROW_EXTEND: TABLE_ROW_EXTEND,
   TABLE_ROW_REMOVE: TABLE_ROW_REMOVE
 };
-Model.prototype.getters = {};
+Model.prototype.getters = {}; // Model.tables = {} // 数据表原始配置
+
 Model.Mutations = Mutations;
 Model.Actions = Actions;
 Model.Factory = {

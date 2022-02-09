@@ -3,7 +3,7 @@ import TableController from '../library/controller'
 import helper from '../helper'
 
 const ctrl = new TableController()
-console.log(ctrl)
+
 export default {
     data() {
         return {

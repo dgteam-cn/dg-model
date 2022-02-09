@@ -27,7 +27,7 @@ ajax.interceptors.request.use(config => {
 // 添加响应拦截器
 ajax.interceptors.response.use(res => {
     if (res) {
-        let {config, status, data} = res
+        let {status, data} = res
         if (data.err === undefined) {
             if (`${status}`[0] == '4' || `${status}`[0] == '5') {
                 try {

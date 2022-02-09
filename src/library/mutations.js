@@ -68,8 +68,10 @@ const TABLE_UPDATE = function(state, [table, key = 'list', value] = []) {
 const TABLE_RESET = function(state, table) {
     const tables = Array.isArray(table) ? table : [table]
     tables.forEach(name => {
-        if (name && state[name] && helper.instance(state[name], Table)) {
-            const reset = Object.assign({}, state[name].reset)
+        window.test = state[name]
+        // 在 nuxt2 service 模式中 instance 方法会失效，需要根据 table 属性判断
+        if (name && state[name] && (helper.instance(state[name], Table) || state[name].__table__)) {
+            const reset = Object.assign({}, state[name].__reset__)
             for (const key in reset) {
                 Model.dataSet(state[name], key, reset[key]) // 2021-12-23 v0.4 部分新增的自定义字段不会被重置，仅重置初始字段
             }
