@@ -25,8 +25,8 @@ npm install @dgteam/model -S
   </CodeGroupItem>
 </CodeGroup>
 
-## 使用 HTTP 适配器
-DGX 需要 http adapter 提供 tcp 请求的支持。根据使用环境不同，目前支持 [axios](https://www.npmjs.com/package/axios) 与 [uni.request](https://uniapp.dcloud.io/api/request/request) 两种方式。
+<!-- ## 使用 HTTP 适配器
+DGX 需要 http adapter 提供 tcp 请求的支持。根据使用环境不同，目前支持 [axios](https://www.npmjs.com/package/axios) 与 [uni.request](https://uniapp.dcloud.io/api/request/request) 两种方式。 -->
 
 ## 安装 Vuex
 Dgx 在 Vue 中是基于 [Vuex](https://next.vuex.vuejs.org/zh/index.html) 实现，在安装 dgx 之前请确保已经安装了 [Vuex](https://next.vuex.vuejs.org/zh/index.html) 相关模块。
@@ -43,7 +43,7 @@ import axios from 'axios'
 
 // 提示: 在安装 DGX 之前，请确保已经安装了 Vuex 模块
 Vue.use(dgx, {
-    httpAdapter: axios
+    httpAdapter: axios // 网络适配器支持 axios 和 uni.request 两种方式
 })
 ```
 

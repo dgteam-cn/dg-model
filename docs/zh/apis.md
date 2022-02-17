@@ -8,9 +8,13 @@ title: 介绍
 ## 调用模式说明
 
 数据模型声明之后，我们提供三种调用方式：   
+<!-- [模型代理](链接地址)
 #### 模型代理 Proxy   
+- 对模型进阶封装的 TableProxy 对象，除了可以直接读取模型对象属性，还封装了操作模型的方法
 #### 使用 Mixin
+- 根据 Vue mixin 的特性封装的操作模型的方法，可在 Vue components 中使用
 #### 使用 Vuex 原生方式调用
+- 基于 Vuex 原生操作模型的方法，对定制需求较高可使用 -->
 
 ### Table Proxy 方式
 框架会检测出所有的数据模型，封装成 TableProxy 对象挂载到 $models 节点中，可以在任意 Vue Components 中进行调用。TableProxy 除了拥有 table 的属性，还封装了操作 table 的常用方法。
@@ -59,7 +63,7 @@ title: 介绍
 
 
 ### Components Mixin 方式
-框架封装了常用的方法，通过 Vue Mixin 的方式混合到 Vue Components 中，方便调用。
+根据 Vue mixin 的特性封装的快速操作模型的方法，可在 Vue Components 中使用。
 
 <CodeGroup>
   <CodeGroupItem title="单模块调用" active>
@@ -195,9 +199,9 @@ export default {
 </CodeGroup>
 
 ### Vuex Api 方式
-Proxy 与 Mixin 都是基于 Vuex Api 进行上层封装，Vuex Api 方式调用仅提供一些比较底层的接口。
-
-<CodeGroup>
+Proxy 与 Mixin 都是基于 Vuex Api 进行上层封装，Vuex Api 可提供一些比较底层的接口。
+文档编写中
+<!-- <CodeGroup>
   <CodeGroupItem title="单模块调用" active>
 
 ```vue
@@ -249,7 +253,7 @@ export default {
 ```
 
   </CodeGroupItem>
-</CodeGroup>
+</CodeGroup> -->
 
 
 ## 接口列表
@@ -262,7 +266,7 @@ export default {
 /**
  * @param {Number} page - 列表页码, 默认: 1
  * @param {Object} filter - 过滤器, 会赋值给 FetchConfig.params
- * @param {FetchConfig} opt - fetch 参数
+ * @param {FetchConfig} opt
  */
 this.$models.model.get(page, filter, opt)
 ```
@@ -275,21 +279,9 @@ this.$models.model.get(page, filter, opt)
  * @param {Number} page - 列表页码, 默认: 1
  * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
  * @param {Object} filter - 过滤器, 不传自动尝试从 this.Filter 中获取, 会赋值给 FetchConfig.params
- * @param {FetchConfig} opt - fetch 参数
+ * @param {FetchConfig} opt
  */
 this.Get(page, path, filter, opt)
-```
-
-  </CodeGroupItem>
-  <CodeGroupItem title="Vuex">
-
-```javascript
-/**
- * @param {String} namespace - 多模块下需要传命名空间（属于 Vuex 规范）
- * @param {String} MODEL - 表名称（大写）
- * @param {FetchConfig} opt - fetch 参数
- */
-this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
 ```
 
   </CodeGroupItem>
@@ -308,7 +300,7 @@ this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
 /**
  * @param {Number} page - 列表页码, 默认: 1
  * @param {Object} filter - 过滤器, 会赋值给 FetchConfig.params
- * @param {FetchConfig} opt - fetch 参数
+ * @param {FetchConfig} opt
  */
 this.$models.model.getInit(page, filter, opt)
 ```
@@ -321,17 +313,9 @@ this.$models.model.getInit(page, filter, opt)
  * @param {Number} page - 列表页码, 默认: 1
  * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
  * @param {Object} filter - 过滤器, 会赋值给 FetchConfig.params
- * @param {FetchConfig} opt - fetch 参数
+ * @param {FetchConfig} opt
  */
 this.GetInit(page, path, filter, opt)
-```
-
-  </CodeGroupItem>
-  <CodeGroupItem title="Vuex">
-
-```javascript
-// 无对应方法，需要在 Get 方法基础上自行封装
-this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
 ```
 
   </CodeGroupItem>
@@ -347,7 +331,7 @@ this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
 ```javascript
 /**
  * @param {Object} filter - 过滤器
- * @param {FetchConfig} opt - fetch 参数
+ * @param {FetchConfig} opt
  */
 this.$models.model.getFilter(page, filter, opt)
 ```
@@ -359,17 +343,9 @@ this.$models.model.getFilter(page, filter, opt)
 /**
  * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
  * @param {Object} filter - 过滤器, 不传自动尝试从 this.Filter 中获取, 会赋值给 FetchConfig.params
- * @param {FetchConfig} opt - fetch 参数
+ * @param {FetchConfig} opt
  */
 this.GetFilter(path, filter, opt)
-```
-
-  </CodeGroupItem>
-  <CodeGroupItem title="Vuex">
-
-```javascript
-// 无对应方法，需要在 Get 方法基础上自行封装
-this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
 ```
 
   </CodeGroupItem>
@@ -383,8 +359,8 @@ this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
 
 ```javascript
 /**
- * @param {Object} filter - 过滤器
- * @param {FetchConfig} opt - fetch 参数
+ * @param {Object} filter - 查询过滤器
+ * @param {FetchConfig} opt
  */
 this.$models.model.getMore(filter, opt)
 ```
@@ -395,18 +371,10 @@ this.$models.model.getMore(filter, opt)
 ```javascript
 /**
  * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
- * @param {Object} filter - 过滤器, 不传自动尝试从 this.Filter 中获取, 会赋值给 FetchConfig.params
- * @param {FetchConfig} opt - fetch 参数
+ * @param {Object} filter - 查询过滤器, 不传自动尝试从 this.Filter 中获取, 会赋值给 FetchConfig.params
+ * @param {FetchConfig} opt
  */
 this.GetMore(path, filter, opt)
-```
-
-  </CodeGroupItem>
-  <CodeGroupItem title="Vuex">
-
-```javascript
-// 无对应方法，需要在 Get 方法基础上自行封装
-this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
 ```
 
   </CodeGroupItem>
@@ -423,7 +391,7 @@ this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
 /**
  * @param {Number|String} id - 行数据主键
  * @param {Object} params - 请求参数, 会赋值给 FetchConfig.params
- * @param {FetchConfig} opt - fetch 参数
+ * @param {FetchConfig} opt
  */
 this.$models.model.getItem(id)
 ```
@@ -435,18 +403,198 @@ this.$models.model.getItem(id)
 /**
  * @param {Number|String} id - 行数据主键
  * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
- * @param {Object} params - 过滤器, 会赋值给 FetchConfig.params
- * @param {FetchConfig} opt - fetch 参数
+ * @param {Object} params - 查询过滤器, 会赋值给 FetchConfig.params
+ * @param {FetchConfig} opt
  */
 this.GetItem(id, path, params, opt)
 ```
 
   </CodeGroupItem>
-  <CodeGroupItem title="Vuex">
+</CodeGroup>
+
+### ActiveRow - 把某一行数据设为焦点
+> 会自动判断当前模型是否能加载更多数据
+<CodeGroup>
+  <CodeGroupItem title="Proxy" active>
 
 ```javascript
-// 无对应方法，需要在 Get 方法基础上自行封装
-this.$store.dispatch(`${namespace}/GET_${MODEL}`, opt)
+/**
+ * @param {RowObject} item - 行数据实例，dgx 会根据行数据主键自动判断
+ */
+this.$models.model.activeRow(item)
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Mixin">
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象实例, 也可以穿入包含行对象主键的其他对象
+ * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
+ */
+this.ActiveRow(item, path)
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+
+### UpdateRow - 更新行数据实例
+此方法仅为前端临时更新数据，不会与后端进行同步（不会执行 PUT 接口）
+<CodeGroup>
+  <CodeGroupItem title="Proxy" active>
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象实例, 至少要包含 RowObject 实例的主键
+ */
+this.$models.model.updateRow(item)
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Mixin">
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象实例, 至少要包含 RowObject 实例的主键
+ * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
+ */
+this.UpdateRow(item, path)
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+
+### POST - 新增数据
+数据联动：创建成功后会自动同步前端数据模型，默认关闭
+<CodeGroup>
+  <CodeGroupItem title="Proxy" active>
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象实例
+ * @param {FetchConfig} opt
+ */
+this.$models.model.post(item, opt)
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Mixin">
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象
+ * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
+ * @param {FetchConfig} opt
+ */
+this.Post(item, path, opt)
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+
+### Put - 更新数据
+数据联动：创建成功后会自动同步前端数据模型，默认开启
+<CodeGroup>
+  <CodeGroupItem title="Proxy" active>
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象实例, 也可以穿入包含行对象主键的其他对象
+ * @param {FetchConfig} opt
+ */
+this.$models.model.post(item, opt)
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Mixin">
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象实例, 也可以穿入包含行对象主键的其他对象
+ * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
+ * @param {FetchConfig} opt
+ */
+this.Put(item, path, opt)
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+
+### Submit - 提交数据
+以 item 中是否包含主键为依据，自动判断执行 POST 或 PUT 方法
+<CodeGroup>
+  <CodeGroupItem title="Proxy" active>
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象
+ * @param {FetchConfig} opt
+ */
+this.$models.model.submit(item, opt)
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Mixin">
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象
+ * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
+ * @param {FetchConfig} opt
+ */
+this.Submit(item, path, opt)
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+
+### Delete - 删除数据
+数据联动：创建成功后会自动同步前端数据模型，默认开启
+<CodeGroup>
+  <CodeGroupItem title="Proxy" active>
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象实例, 也可以穿入包含行对象主键的其他对象
+ * @param {FetchConfig} opt
+ */
+this.$models.model.del(item, opt)
+// 或 this.$models.model.destroy(item, opt) 
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Mixin">
+
+```javascript
+/**
+ * @param {RowObject} item - 行对象实例, 也可以穿入包含行对象主键的其他对象
+ * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
+ * @param {FetchConfig} opt
+ */
+this.Del(item, path, opt)
+// 或 this.Delete(item, path, opt)
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+
+
+### ResetTable - 重置模型
+<CodeGroup>
+  <CodeGroupItem title="Proxy" active>
+
+```javascript
+this.$models.model.resetTable()
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Mixin">
+
+```javascript
+/**
+ * @param {String} path - 模型路径, 不传则默认从 this.$options.model 中获取
+ */
+this.ResetTable(path)
 ```
 
   </CodeGroupItem>

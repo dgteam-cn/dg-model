@@ -14,13 +14,13 @@ module.exports = [
     //         ]}
     //     ]
     // },
-    {
-        text: '生态',
-        children: [
-            {
-                text: '@dgteam/model',
-                link: '/warehouse/model/'
-            }
-        ]
-    }
+    // {
+    //     text: '生态',
+    //     children: [
+    //         {
+    //             text: '@dgteam/model',
+    //             link: '/warehouse/model/'
+    //         }
+    //     ]
+    // }
 ]

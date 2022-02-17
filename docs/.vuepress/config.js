@@ -11,14 +11,14 @@ module.exports = {
     ],    
     locales: {
         '/zh/': {lang: 'zh-CN', title: 'DGTEAM', description: ''},
-        '/en/': {lang: 'en-US', title: 'DGTEAM', description: ''}
+        // '/en/': {lang: 'en-US', title: 'DGTEAM', description: ''}
     },
     themeConfig: {
         home: '/zh/',
         logo: 'https://vuejs.org/images/logo.png',
         // logoDark: '',        
         darkMode: true, // 可开启夜间模式
-        repo: 'https://github.com/dgteam-cn/egg-engine',
+        repo: 'https://github.com/dgteam-cn/dgx',
         // repoLabel: '',
         locales: {
             '/zh/': {

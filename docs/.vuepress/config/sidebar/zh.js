@@ -17,17 +17,18 @@ module.exports = {
                 {text: '内置对象', link: '/zh/objects.md'} // 内置对象
             ]
         },
+        // {
+        //     text: '进阶',
+        //     children: [
+                
+        //     ]
+        // },
         {
-            text: '进阶',
+            text: '其他',
             children: [
-                {text: '网络适配器'}
-            ]
-        },
-        {
-            text: '相关文献',
-            children: [
-                {text: '后端接口规范'},
-                {text: '性能优化'}
+                {text: '后端接口规范', link: 'restful'},
+                {text: '网络适配器', link: 'http-adapter'}
+                // {text: '性能优化', link: 'http-adapter'}
             ]
         }
     ]
