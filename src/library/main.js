@@ -41,6 +41,10 @@ const Table = function(model, ...args) {
         item: null // 焦点对象
     })
     const enumerable = process.server, configurable = true, writable = true;
+
+    // this.__reset__ = helper.originJSON(obj)
+    // this.__table__ = true
+
     Object.defineProperties(this, {
         __reset__: {value: helper.originJSON(obj), configurable, enumerable, writable}, // 备份原始数据
         __table__: {value: true, configurable, enumerable, writable}
@@ -51,6 +55,9 @@ const Table = function(model, ...args) {
     // console.log('process.service', process.server)
     return this
 }
+// Table.prototype.toJSON = function() {
+//     return {...this}
+// }
 
 const Model = function constructor(opt = {}, config = {}) {
     const {httpAdapter, namespaced = true} = opt
@@ -67,8 +74,7 @@ const Model = function constructor(opt = {}, config = {}) {
 
     // 混合配置
     for (const key of ['state', 'actions', 'mutations', 'getters']) {
-        // typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
-        this[key] = helper.extend({}, this[key], opt[key])
+        this[key] = helper.extend({}, this[key], opt[key]) // typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
     }
 
     // 覆盖配置
@@ -115,8 +121,7 @@ const Model = function constructor(opt = {}, config = {}) {
             if (typeof options === 'string') {
                 options = {url: options}
             }
-            // Model.dataSet(this.state, name, new Table(name, options))
-            this.state[name] = new Table(name, options, {options})
+            this.state[name] = new Table(name, options, {options}) // Model.dataSet(this.state, name, new Table(name, options))
             helper.extend(tableActions, ACTIVE(name, this), RESTFUL(name, this))
         }
     }
