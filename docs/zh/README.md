@@ -1,5 +1,6 @@
 ---
 home: true
+lang: zh-CN
 title: 首页
 heroText: DGX
 tagline: 前端数据交互、管理工具
