@@ -133,8 +133,7 @@ TableController.prototype.getInit = function (path) {
     try {
       needFetch = JSON.stringify(instance.filter) !== JSON.stringify(filter);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      _helper["default"].consoleWarn('[@dgteam/model] GetInit: filter is invalid.');
+      _helper["default"].consoleWarn('GetInit: filter is invalid.');
     }
   }
 

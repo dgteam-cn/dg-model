@@ -61,6 +61,7 @@ const FETCH = function({state, commit}, config = {}) {
 
     // 整合请求头
     if (!config.headers) config.headers = {}
+
     if (table && state[table] && state[table].auth) {
         config.headers['Identity'] = state[table].auth // 此步骤不符合规范
         if (!config.auth) {
@@ -140,7 +141,7 @@ const FETCH = function({state, commit}, config = {}) {
             const requestConfig = requestConfigAdapter(config, {uni: Model.uniRequestAdapter})
             return Model.httpAdapter({getCancel, ...requestConfig}).then(callback.success, callback.error)
         } else {
-            helper.consoleWarn('[@dgteam/model] need httpAdapter.')
+            helper.consoleWarn('need httpAdapter.')
         }
     })
 }

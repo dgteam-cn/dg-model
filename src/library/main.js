@@ -13,16 +13,13 @@ const {
     TABLE_ROWS_JOIN, TABLE_ROWS_MERGE, TABLE_ROW_EXTEND, TABLE_ROW_REMOVE
 } = Mutations
 
-// 在 Vue 2 中 Array 会被代理，因此创建 List 类没有意义
-
+// 在 Vue 2 中 Array 会被代理，因此创建 List class 没有意义
 
 const Table = function(model, ...args) {
-    const obj = helper.extend({
-        enums: {} // 0.4.0 版本新增，枚举对象
-    }, ...args, {
+    const baseAttr = {
         name: model, // 模型名称
         // path: model, // 模型路径
-        // auth: this.state[model].options.auth ? this.state[model].options.auth : this.auth,
+        // auth: this.state[model].options.auth ? this.state[model].options.auth : this.auth, // 此步骤不符合规范
         init: false, // 是否初始化（至少 GET 过一次）
         error: false, // 最后一 GET 是否错误
         loading: 0, // 正在执行 GET 接口的数量
@@ -39,7 +36,11 @@ const Table = function(model, ...args) {
         // id: null, // 此字段即将废弃
         active: null, // 焦点在数据的索引
         item: null // 焦点对象
-    })
+    }
+    const additional = helper.extend({}, ...args)
+    const obj = helper.extend({
+        enums: {} // 0.4.0 版本新增，枚举对象
+    }, additional, baseAttr)
     const enumerable = process.server, configurable = true, writable = true;
 
     // this.__reset__ = helper.originJSON(obj)
@@ -52,16 +53,26 @@ const Table = function(model, ...args) {
     for (const key in obj) {
         this[key] = obj[key]
     }
-    // console.log('process.service', process.server)
+    // nuxt 要求提供 toJSON 方法
+    this.toJSON = () => {
+        const obj = {
+            __reset__: this.__reset__,
+            __table__: this.__table__
+        }
+        for (const key in additional) {
+            obj[key] = this[key]
+        }
+        for (const key in baseAttr) {
+            obj[key] = this[key]
+        }
+        return obj
+    }
     return this
 }
-// Table.prototype.toJSON = function() {
-//     return {...this}
-// }
 
 const Model = function constructor(opt = {}, config = {}) {
     const {httpAdapter, namespaced = true} = opt
-    const {auth} = config
+    const {auth} = config // 此字段不符合规范
 
     this.id = helper.randomString(16) // 唯一标识
     this.auth = auth

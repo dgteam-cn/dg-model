@@ -34,21 +34,16 @@ var FETCH_JOIN = Mutations.FETCH_JOIN,
     TABLE_ROWS_JOIN = Mutations.TABLE_ROWS_JOIN,
     TABLE_ROWS_MERGE = Mutations.TABLE_ROWS_MERGE,
     TABLE_ROW_EXTEND = Mutations.TABLE_ROW_EXTEND,
-    TABLE_ROW_REMOVE = Mutations.TABLE_ROW_REMOVE; // 在 Vue 2 中 Array 会被代理，因此创建 List 类没有意义
+    TABLE_ROW_REMOVE = Mutations.TABLE_ROW_REMOVE; // 在 Vue 2 中 Array 会被代理，因此创建 List class 没有意义
 
 var Table = function Table(model) {
-  for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    args[_key - 1] = arguments[_key];
-  }
+  var _this = this;
 
-  var obj = _helper["default"].extend.apply(_helper["default"], [{
-    enums: {} // 0.4.0 版本新增，枚举对象
-
-  }].concat(args, [{
+  var baseAttr = {
     name: model,
     // 模型名称
     // path: model, // 模型路径
-    // auth: this.state[model].options.auth ? this.state[model].options.auth : this.auth,
+    // auth: this.state[model].options.auth ? this.state[model].options.auth : this.auth, // 此步骤不符合规范
     init: false,
     // 是否初始化（至少 GET 过一次）
     error: false,
@@ -77,11 +72,24 @@ var Table = function Table(model) {
     // 焦点在数据的索引
     item: null // 焦点对象
 
-  }]));
+  };
+
+  for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    args[_key - 1] = arguments[_key];
+  }
+
+  var additional = _helper["default"].extend.apply(_helper["default"], [{}].concat(args));
+
+  var obj = _helper["default"].extend({
+    enums: {} // 0.4.0 版本新增，枚举对象
+
+  }, additional, baseAttr);
 
   var enumerable = process.server,
       configurable = true,
-      writable = true;
+      writable = true; // this.__reset__ = helper.originJSON(obj)
+  // this.__table__ = true
+
   Object.defineProperties(this, {
     __reset__: {
       value: _helper["default"].originJSON(obj),
@@ -100,8 +108,25 @@ var Table = function Table(model) {
 
   for (var key in obj) {
     this[key] = obj[key];
-  } // console.log('process.service', process.server)
+  } // nuxt 要求提供 toJSON 方法
 
+
+  this.toJSON = function () {
+    var obj = {
+      __reset__: _this.__reset__,
+      __table__: _this.__table__
+    };
+
+    for (var _key2 in additional) {
+      obj[_key2] = _this[_key2];
+    }
+
+    for (var _key3 in baseAttr) {
+      obj[_key3] = _this[_key3];
+    }
+
+    return obj;
+  };
 
   return this;
 };
@@ -114,7 +139,8 @@ var Model = function constructor() {
   var httpAdapter = opt.httpAdapter,
       _opt$namespaced = opt.namespaced,
       namespaced = _opt$namespaced === void 0 ? true : _opt$namespaced;
-  var auth = config.auth;
+  var auth = config.auth; // 此字段不符合规范
+
   this.id = _helper["default"].randomString(16); // 唯一标识
 
   this.auth = auth;
@@ -127,16 +153,15 @@ var Model = function constructor() {
 
   for (var _i = 0, _arr = ['state', 'actions', 'mutations', 'getters']; _i < _arr.length; _i++) {
     var key = _arr[_i];
-    // typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
-    this[key] = _helper["default"].extend({}, this[key], opt[key]);
+    this[key] = _helper["default"].extend({}, this[key], opt[key]); // typeof null === 'object' 且 null 不能作为 Object.assign 的第一个参数
   } // 覆盖配置
   // 2021-12-30 新增 plugins、strict、devtools 参数
   // 2022-02-08 新增 tables 参数
 
 
   for (var _i2 = 0, _arr2 = ['tables', 'modules', 'plugins', 'strict', 'devtools']; _i2 < _arr2.length; _i2++) {
-    var _key2 = _arr2[_i2];
-    this[_key2] = opt[_key2];
+    var _key4 = _arr2[_i2];
+    this[_key4] = opt[_key4];
   } // 遍历所有 state 查找 dgx 模块并创建方法
 
 
@@ -176,12 +201,11 @@ var Model = function constructor() {
         options = {
           url: options
         };
-      } // Model.dataSet(this.state, name, new Table(name, options))
-
+      }
 
       this.state[name] = new Table(name, options, {
         options: options
-      });
+      }); // Model.dataSet(this.state, name, new Table(name, options))
 
       _helper["default"].extend(tableActions, (0, _factory.ACTIVE)(name, this), (0, _factory.RESTFUL)(name, this));
     }

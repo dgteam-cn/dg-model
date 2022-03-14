@@ -246,7 +246,7 @@ var FETCH = function FETCH(_ref2) {
         getCancel: getCancel
       }, requestConfig)).then(callback.success, callback.error);
     } else {
-      _helper["default"].consoleWarn('[@dgteam/model] need httpAdapter.');
+      _helper["default"].consoleWarn('need httpAdapter.');
     }
   });
 };

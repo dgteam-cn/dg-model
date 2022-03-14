@@ -79,8 +79,7 @@ TableController.prototype.getInit = function(path, filter = {}, opt = {}) {
         try {
             needFetch = JSON.stringify(instance.filter) !== JSON.stringify(filter)
         } catch (err) {
-        // eslint-disable-next-line no-console
-            helper.consoleWarn('[@dgteam/model] GetInit: filter is invalid.')
+            helper.consoleWarn('GetInit: filter is invalid.')
         }
     }
     return needFetch ? fetchHandle() : Promise.resolve({err: 0, msg: '', result: instance.list, filter: instance.filter, fetch: false})
