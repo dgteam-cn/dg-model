@@ -258,7 +258,7 @@ var RESTFUL = function RESTFUL(table, _ref4) {
           } else if (Array.isArray(res.result)) {
             if (interact) {
               if (name === 'MORE') {
-                tableCtrl.merge(res.result);
+                tableCtrl.rows.merge(res.result);
               } else {
                 tableCtrl.update('list', res.result);
               }

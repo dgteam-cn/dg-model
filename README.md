@@ -1,3 +1,5 @@
+0.4.2
+    修复 /library/factory.js 的 tableCtrl.merge 方法不存在的错误
 0.4.0
     ⬜  在数据联动之前、之后做钩子函数
     抽离 reset 字段在 table 之外

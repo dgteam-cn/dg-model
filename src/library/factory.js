@@ -187,7 +187,7 @@ const RESTFUL = function(table, {state}) {
                     } else if (Array.isArray(res.result)) {
                         if (interact) {
                             if (name === 'MORE') {
-                                tableCtrl.merge(res.result)
+                                tableCtrl.rows.merge(res.result)
                             } else {
                                 tableCtrl.update('list', res.result)
                             }
