@@ -75,7 +75,7 @@ const Model = function constructor(opt = {}, config = {}) {
     const {auth} = config // 此字段不符合规范
 
     this.id = helper.randomString(16) // 唯一标识
-    this.auth = auth
+    this.auth = auth || config.customData && config.customData.auth // 不符合规范，考虑之后删除
     this.httpAdapter = httpAdapter || Model.httpAdapter
     this.namespaced = namespaced
     this.modules = {}
@@ -125,12 +125,16 @@ const Model = function constructor(opt = {}, config = {}) {
             }
         }
     }
+
     // 0.4.0 推荐 table 声明方式
     if (typeof this.tables === 'object') {
         for (const name in this.tables) {
             let options = this.tables[name]
             if (typeof options === 'string') {
                 options = {url: options}
+            }
+            if (this.auth && !options.auth) {
+                options.auth = this.auth // 不符合规范
             }
             this.state[name] = new Table(name, options, {options}) // Model.dataSet(this.state, name, new Table(name, options))
             helper.extend(tableActions, ACTIVE(name, this), RESTFUL(name, this))

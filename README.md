@@ -1,3 +1,9 @@
+0.4.3
+    解决 tables 配置参数 config.auth 不生效的问题
+    处理 limit 外层 table.options 配置不生效的问题
+    处理 RESTfulConfig 在内层中设置 false 无法覆盖外层的问题
+    新增 RESTfulConfig 支持 function 类型，接收 fetchData、table.options、Model 作为参数
+
 0.4.2
     修复 /library/factory.js 的 tableCtrl.merge 方法不存在的错误
 0.4.0

@@ -143,7 +143,8 @@ var Model = function constructor() {
 
   this.id = _helper["default"].randomString(16); // 唯一标识
 
-  this.auth = auth;
+  this.auth = auth || config.customData && config.customData.auth; // 不符合规范，考虑之后删除
+
   this.httpAdapter = httpAdapter || Model.httpAdapter;
   this.namespaced = namespaced;
   this.modules = {};
@@ -201,6 +202,10 @@ var Model = function constructor() {
         options = {
           url: options
         };
+      }
+
+      if (this.auth && !options.auth) {
+        options.auth = this.auth; // 不符合规范
       }
 
       this.state[name] = new Table(name, options, {

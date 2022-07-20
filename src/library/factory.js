@@ -97,21 +97,27 @@ const RESTFUL = function(table, {state}) {
             const getRESTfulConfig = (key, method) => {
                 let result = false
                 if (typeof key === 'string') {
-                    if (data[key]) {
+                    if (data[key] !== undefined) {
                         // #1 - 优先从 action 的 fetchData 中获取
                         result = data[key]
-                    } else if (opt[method] && opt[method][key]) {
-                        // #2 否则从 Table 的 options 中获取
+                    } else if (opt[method] && opt[method][key] !== undefined) {
+                        // #2 否则从 Table 的 options[method] 中获取
                         result = opt[method][key]
+                    } else if (opt[key] !== undefined) {
+                        // #3 否则从 Table 的 options 中获取
+                        result = opt[key]
                     } else if (typeof Model.config === 'object') {
-                        // #3 最终尝试在 Model 的静态属性 config 中获取
-                        if (typeof Model.config[method] === 'object' && Model.config[method][key]) {
+                        // #4 最终尝试在 Model 的静态属性 config[method] 中获取
+                        if (typeof Model.config[method] === 'object' && Model.config[method][key] !== undefined) {
                             result = Model.config[method][key]
                         }
                     }
                     if (result === true && key === 'only') {
                         result = method // only 特性，如果未传 onlyKey 则自动指定 method 字段为 onlyKey
                     }
+                }
+                if (typeof result === 'function') {
+                    result = result(data, opt, Model) // 新增
                 }
                 return result
             }
